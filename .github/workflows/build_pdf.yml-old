@@ -1,0 +1,45 @@
+name: LaTeX Book PDF CI/CD
+
+on:
+  push:
+    branches:
+      - main  # Або master
+    paths:
+      - 'book.tex' # Запуск лише при зміні основного файлу
+      - 'Dockerfile'
+
+jobs:
+  build_and_commit:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        # Отримуємо код репозиторію
+        uses: actions/checkout@v4
+        
+      - name: Build and Run Docker Container
+        id: docker_build
+        uses: addnab/docker-run-action@v3
+        with:
+            image: local-latex-builder 
+                  
+            build: |
+                    docker build -t local-latex-builder . 
+                    
+            run: |
+                    docker run --rm -v ${{ github.workspace }}:/app -w /app local-latex-builder
+
+      - name: Commit and Push PDF
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          files: book.pdf
+          commit_message: 'CI: Auto-generated book.pdf from book.tex'
+          branch: ${{ github.ref_name }}
+          commit_user_name: GitHub Actions Bot
+          commit_user_email: actions@github.com
+          
+      - name: Upload PDF as Artifact (Опційно)
+        uses: actions/upload-artifact@v4
+        with:
+          name: compiled-book-pdf
+          path: book.pdf
