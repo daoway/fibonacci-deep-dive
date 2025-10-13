@@ -28,8 +28,12 @@ jobs:
         sudo apt-get install -y texlive-xetex texlive-fonts-recommended texlive-fonts-extra fonts-jetbrains-mono
     
     - name: Compile LaTeX
-      run: xelatex -interaction=nonstopmode book.tex
-    
+      run: |
+        xelatex -interaction=nonstopmode book.tex
+        while grep -q "Rerun to get" book.log; do
+          xelatex -interaction=nonstopmode book.tex
+        done
+
     - name: Commit and Push PDF
       uses: stefanzweifel/git-auto-commit-action@v5
       with:
