@@ -17,13 +17,11 @@ jobs:
     - name: Cache LaTeX packages
       uses: actions/cache@v4
       with:
-        path: |
-          /var/cache/apt
-          /usr/share/texlive
+        path: /usr/share/texlive
         key: texlive-${{ runner.os }}-${{ hashFiles('**/Dockerfile') }}
         restore-keys: |
           texlive-${{ runner.os }}-
-                  
+
     - name: Install LaTeX
       run: |
         sudo apt-get update
