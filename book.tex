@@ -1,16 +1,170 @@
 \documentclass{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amsfonts}
+\usepackage{listings}
 \usepackage{fontspec}
+\usepackage[bookmarks, hidelinks]{hyperref}
+\usepackage{array} % For tables
+\usepackage{graphicx} % 1. Include the graphicx package
+
+% Set JetBrains Mono as the default monospaced font
 \setmonofont{JetBrainsMono-Regular}
 
+% Restore original IntelliJ-style code formatting
+\lstdefinestyle{intelliJStyle}{
+    language=Java,
+    basicstyle=\ttfamily\small,
+    numbers=left,
+    numberstyle=\tiny,
+    stepnumber=1,
+    numbersep=5pt,
+    frame=single,
+    breaklines=true,
+    breakatwhitespace=true,
+    tabsize=1,
+    showstringspaces=false,
+    captionpos=b
+}
+\lstset{style=intelliJStyle}
+
 \usepackage{listings}
-\lstset{basicstyle=\ttfamily}
+% \usepackage{xcolor} % No longer strictly needed if only using black/white, but harmless to keep.
+
+\lstdefinelanguage{JavaScript}{
+	keywords={
+		break, case, catch, class, const, continue, debugger, default, delete, do, 
+		else, export, extends, finally, for, function, if, import, in, instanceof, 
+		new, return, super, switch, this, throw, try, typeof, var, void, while, with, 
+		yield, static, async, await, enum, implements, interface, let, package, private, 
+		protected, public, arguments
+	},
+	morestring=[b]",
+	morestring=[b]',
+	morestring=[b]\`, % Template literal support
+	comment=[l]//,
+	comment=[s]{/*}{*/},
+	ndkeywords={
+		Array, Boolean, Date, Error, EvalError, Function, Infinity, JSON, Math, NaN, 
+		Number, Object, Promise, Proxy, Reflect, RegExp, Set, String, Symbol, 
+		TypeError, URIError, WeakMap, WeakSet, undefined, null, console, window, 
+		document, alert, setTimeout, setInterval, clearTimeout, clearInterval, 
+		fetch, require, module, process
+	},
+	keywordstyle=\bfseries, % Keywords will be bold
+	ndkeywordstyle=\slshape, % Non-declared keywords will be slanted/italic
+	stringstyle=\ttfamily, % Strings will be monospaced (typewriter) font
+	commentstyle=\itshape\small, % Comments will be italic and slightly smaller
+	identifierstyle=, % Default style for identifiers (usually regular text)
+	sensitive=true
+}
+
+% Restore original Maple language definition
+\lstdefinelanguage{Maple}{
+    sensitive=true,
+    morecomment=[l]{--},
+    morecomment=[s]{/*}{*/},
+    morestring=[b]",
+    morestring=[b]',
+    morekeywords={and,assuming,do,else,end,export,finally,for,if,implies,in,local,module,next,not,option,or,proc,quit,read,return,save,then,use,while},
+    morekeywords=[2]{array,begin,by,case,description,elif,except,fi,proc,od,otherwise,repeat,return,select,then,until,when,where},
+    morekeywords=[3]{diff,int,factor,integrate,limit,signum,sum},
+    alsoletter={\$},
+    literate=
+        {>}{{\textgreater}}1
+        {<}{{\textless}}1
+}
+
+\usepackage{titlesec}
+\newcommand{\sectionbreak}{\clearpage}
+
+\usepackage{float}
 
 \begin{document}
+\bibliographystyle{plain}
 
-\begin{lstlisting}[language=Python]
-import sys
-print("Hello, World and PDF!") # experimenting with actions
-sys.exit(-1)
-\end{lstlisting}
+\title{Fibonacci Numbers: A Deep Dive}
+\author{Stanislav Ostapenko}
+\date{\today}
+\maketitle
+
+\begin{abstract}
+	TODO
+\end{abstract}
+
+\clearpage
+
+	\tableofcontents % Generate table of contents
+
+	\clearpage
+	
+	\lstlistoflistings % Generate list of listings
+
+\clearpage % or \newpage
+
+\clearpage
+
+	\thispagestyle{empty}
+
+	\vspace*{\fill}
+	\begin{center}
+		\Huge
+		\begin{align*}
+			&   \mathcal{O}(1) &&= \mathcal{O}(\text{yeah})\\
+			&    \mathcal{O}(\log_{} n) &&= \mathcal{O}(\text{nice})\\
+			&    \mathcal{O}(n) &&= \mathcal{O}(\text{k})\\
+			&    \mathcal{O}(n^{2}) &&= \mathcal{O}(\text{my})\\
+			&    \mathcal{O}(2^{n}) &&= \mathcal{O}(\text{no})\\
+			&    \mathcal{O}(n!) &&= \mathcal{O}(\text{mg})\\
+			&    \mathcal{O}(n^{n}) &&= \mathcal{O}(\text{sh*t!})
+		\end{align*}
+	\end{center}
+	\vspace*{\fill}
+
+\clearpage
+
+\newcommand{\sectionbreak}{\clearpage}
+\section{Recursion and Mathematical Induction}
+\section{Naive Recursion}
+\subsection{Algorithm in Java}
+\subsection{Binet's formula}
+\subsubsection{Intuitive Explanation}
+\subsubsection{Formal Derivation}
+\subsection{Time Complexity (Big $\mathcal{O}$)}
+\subsection{Empirical Validation of Time Complexity}
+\subsection{Introduction to JVM Memory Structures}
+\subsection{Method Execution in Java}
+\subsubsection{Core concepts}
+\subsubsection{Pass-by-Value in Java}
+\subsubsection{Tail Recursion}
+\subsection{Depth and \lstinline[basicstyle=\ttfamily\small]{StackOverflow}}
+\subsection{Recursion Tree}
+\subsection{Space Complexity}
+\subsubsection{Call Stack Analysis}
+\subsubsection{Clarification on Exponential Misconception}
+\subsection{JVM Debugger view}
+\subsection{Conclusion}
+\section{Optimizing Recursion}
+\subsection{Memoization}
+\subsection{Dynamic Programming}
+\subsection{Linear algebra and Fibonacci}
+\subsubsection{Matrices and Transformations}
+\subsubsection{Algorithm implementation in Java}
+\subsubsection{Time and space complexity}
+\subsection{Computer Algebra Systems}
+\subsection{Binet formula in real life}
+\subsection{Conclusion}
+\section{Limitations of Primitive Types for Large Fibonacci Numbers}
+\subsection{Showcase : from int to double}
+\subsection{When double goes wild}
+\subsubsection{$0.1 + 0.2 \ne 0.3$}
+\subsubsection{IEEE 754 Representation}
+\subsubsection{Calculate as machines}
+\subsubsection{Conclusion}
+\subsection{Handling Large Numbers with BigDecimal}
+\section{Real-World Applications}
+\subsection{Fibonacci heaps for Dijkstra's algorithm optimization}
+\subsection{Fibonacci retracement levels in stock market analysis}
+\subsection{Some of pseudorandom number generators}
+
 
 \end{document}
