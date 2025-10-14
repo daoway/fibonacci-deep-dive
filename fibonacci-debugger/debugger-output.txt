@@ -1,0 +1,151 @@
+
+C:\temp\fibonacci-article\claude-fibonacci-debugger>java -cp .;C:\server\jdk-22_windows-x64_bin\jdk-22.0.1/lib/tools.jar MinimalDebugger 
+Connecting to target JVM...
+Connected to: Java HotSpot(TM) 64-Bit Server VM
+Class loaded: FibonacciTarget
+Breakpoint set at main method start
+Breakpoint set in fibonacci method
+BREAKPOINT in main() at line 3
+=== PROGRAM STARTED ===
+BREAKPOINT in fibonacci() at line 11
+=== fibonacci(5) ===
+Stack depth: 2
+  [0] fibonacci(n=5)
+  [1] main()
+Fibonacci calls in stack: 1
+
+BREAKPOINT in fibonacci() at line 11
+=== fibonacci(4) ===
+Stack depth: 3
+  [0] fibonacci(n=4)
+  [1] fibonacci(n=5)
+  [2] main()
+Fibonacci calls in stack: 2
+
+BREAKPOINT in fibonacci() at line 11
+=== fibonacci(3) ===
+Stack depth: 4
+  [0] fibonacci(n=3)
+  [1] fibonacci(n=4)
+  [2] fibonacci(n=5)
+  [3] main()
+Fibonacci calls in stack: 3
+
+BREAKPOINT in fibonacci() at line 11
+=== fibonacci(2) ===
+Stack depth: 5
+  [0] fibonacci(n=2)
+  [1] fibonacci(n=3)
+  [2] fibonacci(n=4)
+  [3] fibonacci(n=5)
+  [4] main()
+Fibonacci calls in stack: 4
+
+BREAKPOINT in fibonacci() at line 11
+=== fibonacci(1) ===
+Stack depth: 6
+  [0] fibonacci(n=1)
+  [1] fibonacci(n=2)
+  [2] fibonacci(n=3)
+  [3] fibonacci(n=4)
+  [4] fibonacci(n=5)
+  [5] main()
+Fibonacci calls in stack: 5
+
+BREAKPOINT in fibonacci() at line 11
+=== fibonacci(0) ===
+Stack depth: 6
+  [0] fibonacci(n=0)
+  [1] fibonacci(n=2)
+  [2] fibonacci(n=3)
+  [3] fibonacci(n=4)
+  [4] fibonacci(n=5)
+  [5] main()
+Fibonacci calls in stack: 5
+
+BREAKPOINT in fibonacci() at line 11
+=== fibonacci(1) ===
+Stack depth: 5
+  [0] fibonacci(n=1)
+  [1] fibonacci(n=3)
+  [2] fibonacci(n=4)
+  [3] fibonacci(n=5)
+  [4] main()
+Fibonacci calls in stack: 4
+
+BREAKPOINT in fibonacci() at line 11
+=== fibonacci(2) ===
+Stack depth: 4
+  [0] fibonacci(n=2)
+  [1] fibonacci(n=4)
+  [2] fibonacci(n=5)
+  [3] main()
+Fibonacci calls in stack: 3
+
+BREAKPOINT in fibonacci() at line 11
+=== fibonacci(1) ===
+Stack depth: 5
+  [0] fibonacci(n=1)
+  [1] fibonacci(n=2)
+  [2] fibonacci(n=4)
+  [3] fibonacci(n=5)
+  [4] main()
+Fibonacci calls in stack: 4
+
+BREAKPOINT in fibonacci() at line 11
+=== fibonacci(0) ===
+Stack depth: 5
+  [0] fibonacci(n=0)
+  [1] fibonacci(n=2)
+  [2] fibonacci(n=4)
+  [3] fibonacci(n=5)
+  [4] main()
+Fibonacci calls in stack: 4
+
+BREAKPOINT in fibonacci() at line 11
+=== fibonacci(3) ===
+Stack depth: 3
+  [0] fibonacci(n=3)
+  [1] fibonacci(n=5)
+  [2] main()
+Fibonacci calls in stack: 2
+
+BREAKPOINT in fibonacci() at line 11
+=== fibonacci(2) ===
+Stack depth: 4
+  [0] fibonacci(n=2)
+  [1] fibonacci(n=3)
+  [2] fibonacci(n=5)
+  [3] main()
+Fibonacci calls in stack: 3
+
+BREAKPOINT in fibonacci() at line 11
+=== fibonacci(1) ===
+Stack depth: 5
+  [0] fibonacci(n=1)
+  [1] fibonacci(n=2)
+  [2] fibonacci(n=3)
+  [3] fibonacci(n=5)
+  [4] main()
+Fibonacci calls in stack: 4
+
+BREAKPOINT in fibonacci() at line 11
+=== fibonacci(0) ===
+Stack depth: 5
+  [0] fibonacci(n=0)
+  [1] fibonacci(n=2)
+  [2] fibonacci(n=3)
+  [3] fibonacci(n=5)
+  [4] main()
+Fibonacci calls in stack: 4
+
+BREAKPOINT in fibonacci() at line 11
+=== fibonacci(1) ===
+Stack depth: 4
+  [0] fibonacci(n=1)
+  [1] fibonacci(n=3)
+  [2] fibonacci(n=5)
+  [3] main()
+Fibonacci calls in stack: 3
+
+Target VM terminated
