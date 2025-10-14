@@ -5,7 +5,6 @@ on:
       - main
     paths:
       - 'book.tex'
-      - 'Dockerfile'
 jobs:
   build_and_commit:
     runs-on: ubuntu-latest
@@ -66,3 +65,11 @@ jobs:
       with:
         name: compiled-book-pdf
         path: book.pdf
+
+    - name: Create pages folder
+      run: mkdir -p book && cp book.pdf book/
+
+    - name: Deploy to GitHub Pages
+      uses: actions/upload-pages-artifact@v3
+      with:
+        path: 'book'
