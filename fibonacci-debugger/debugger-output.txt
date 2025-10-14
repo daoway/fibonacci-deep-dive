@@ -1,5 +1,5 @@
+java -cp .;C:\server\jdk-22_windows-x64_bin\jdk-22.0.1/lib/tools.jar MinimalDebugger 
 
-C:\temp\fibonacci-article\claude-fibonacci-debugger>java -cp .;C:\server\jdk-22_windows-x64_bin\jdk-22.0.1/lib/tools.jar MinimalDebugger 
 Connecting to target JVM...
 Connected to: Java HotSpot(TM) 64-Bit Server VM
 Class loaded: FibonacciTarget
