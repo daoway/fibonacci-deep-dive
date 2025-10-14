@@ -3,9 +3,11 @@ on:
   push:
     branches:
       - main
-    paths:
-      - 'book.tex'
-
+    paths-ignore:
+      - '.gitignore'
+      - 'README.md'
+      - '.github/workflows/*'
+      
 permissions:
   contents: write
   pages: write
