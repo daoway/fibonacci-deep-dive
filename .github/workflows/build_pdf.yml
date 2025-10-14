@@ -43,6 +43,13 @@ jobs:
         path: |
           book.log
 
+    - name: Check for compilation errors
+      run: |
+        if grep -q "Fatal error" book.log; then
+          echo "LaTeX compilation failed!"
+          exit 1
+        fi          
+
     - name: Commit and Push PDF
       uses: stefanzweifel/git-auto-commit-action@v5
       with:
