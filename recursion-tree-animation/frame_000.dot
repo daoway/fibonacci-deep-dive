@@ -1,0 +1,5 @@
+digraph G {
+  graph [dpi=300];
+  node [shape=circle, width=1.0, height=1.0, fontsize=20];
+  node0 [label="fib(5)", style=filled, fillcolor=yellow];
+}

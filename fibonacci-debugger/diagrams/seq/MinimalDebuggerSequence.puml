@@ -1,0 +1,91 @@
+@startuml
+actor User
+participant "MinimalDebugger" as Debugger
+participant "VirtualMachine" as VM
+participant "EventRequestManager" as ERM
+participant "EventQueue" as Queue
+participant "ThreadReference" as Thread
+
+User -> Debugger: main()
+Debugger -> Debugger: debug()
+
+' Підключення до JVM
+Debugger -> VM: connect(localhost:5005)
+VM --> Debugger: vm
+Debugger -> VM: eventRequestManager()
+VM --> Debugger: eventManager
+Debugger -> Debugger: print("Connected to JVM")
+
+' Встановлення брейкпойнтів
+Debugger -> ERM: createClassPrepareRequest()
+ERM --> Debugger: classPrepareRequest
+Debugger -> classPrepareRequest: addClassFilter("FibonacciTarget")
+Debugger -> classPrepareRequest: enable()
+
+' Запуск програми
+Debugger -> VM: resume()
+
+' Обробка подій
+Debugger -> Queue: eventQueue()
+Queue --> Debugger: queue
+loop until VMDeathEvent
+    Debugger -> Queue: remove()
+    Queue --> Debugger: eventSet
+    alt ClassPrepareEvent
+        Debugger -> ERM: createBreakpointRequest(main)
+        ERM --> Debugger: mainBp
+        Debugger -> mainBp: enable()
+        Debugger -> Debugger: print("Breakpoint set at main")
+        
+        Debugger -> ERM: createBreakpointRequest(fibonacci)
+        ERM --> Debugger: fibBp
+        Debugger -> fibBp: enable()
+        Debugger -> Debugger: print("Breakpoint set at fibonacci")
+        
+    else BreakpointEvent
+        Debugger -> Debugger: print("BREAKPOINT in method")
+        alt method is "main"
+            Debugger -> Debugger: print("=== PROGRAM STARTED ===")
+        else method is "fibonacci"
+            Debugger -> Debugger: print("=== fibonacci(n) ===")
+            Debugger -> Debugger: showStackFrames()
+            
+            ' Деталі шаряння по стеку
+            Debugger -> Thread: frames()
+            Thread --> Debugger: listOfFrames
+            Debugger -> Debugger: print("Stack depth: " + frames.size())
+            
+            loop for each frame in stack (up to 10)
+                Debugger -> frame: location()
+                frame --> Debugger: frameLocation
+                Debugger -> frameLocation: method()
+                frameLocation --> Debugger: frameMethod
+                Debugger -> frameMethod: name()
+                frameMethod --> Debugger: frameMethodName
+                
+                alt frameMethodName is "fibonacci"
+                    Debugger -> frameMethod: variables()
+                    frameMethod --> Debugger: variables
+                    alt find variable "n"
+                        Debugger -> frame: getValue("n")
+                        frame --> Debugger: nValue
+                        Debugger -> Debugger: print("  [i] fibonacci(n=" + nValue + ")")
+                    else
+                        Debugger -> Debugger: print("  [i] fibonacci(n=?)")
+                    end alt
+                    note right: Count fibonacci calls in stack
+                else
+                    Debugger -> Debugger: print("  [i] " + frameMethodName + "()")
+                end alt
+            end loop
+            Debugger -> Debugger: print("Fibonacci calls in stack: " + count)
+            
+        end alt
+    else VMDeathEvent
+        Debugger -> Debugger: print("Target VM terminated")
+        Debugger -> Debugger: return
+    end alt
+    Debugger -> eventSet: resume()
+end loop
+
+@enduml

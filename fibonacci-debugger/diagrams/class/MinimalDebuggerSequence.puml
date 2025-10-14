@@ -1,0 +1,117 @@
+@startuml
+package "MinimalDebugger" {
+  class MinimalDebugger {
+    -VirtualMachine vm
+    -EventRequestManager eventManager
+    +main(args: String[])
+    +debug()
+    -connect()
+    -setBreakpoint()
+    -handleEvents()
+    -handleClassPrepare(event: ClassPrepareEvent)
+    -handleBreakpoint(event: BreakpointEvent)
+    -showStackFrames(thread: ThreadReference)
+  }
+}
+
+package "JDI" {
+  interface Event
+  class ClassPrepareEvent {
+    +referenceType(): ReferenceType
+  }
+  class BreakpointEvent {
+    +thread(): ThreadReference
+    +location(): Location
+  }
+  class VMDeathEvent
+  class VirtualMachine {
+    +eventRequestManager(): EventRequestManager
+    +resume()
+    +eventQueue(): EventQueue
+  }
+  class EventRequestManager {
+    +createClassPrepareRequest(): ClassPrepareRequest
+    +createBreakpointRequest(location: Location): BreakpointRequest
+  }
+  class ClassPrepareRequest {
+    +addClassFilter(className: String)
+    +enable()
+  }
+  class BreakpointRequest {
+    +enable()
+  }
+  class EventQueue {
+    +remove(): EventSet
+  }
+  class EventSet {
+    +resume()
+  }
+  class ReferenceType {
+    +methodsByName(name: String): List<Method>
+  }
+  class Method {
+    +name(): String
+    +location(): Location
+    +variables(): List<LocalVariable>
+  }
+  class Location {
+    +method(): Method
+    +lineNumber(): int
+  }
+  class ThreadReference {
+    +frame(index: int): StackFrame
+    +frames(): List<StackFrame>
+  }
+  class StackFrame {
+    +location(): Location
+    +getValue(var: LocalVariable): Value
+  }
+  class LocalVariable {
+    +name(): String
+  }
+  class Value {
+    +toString(): String
+  }
+}
+
+' Relationships
+MinimalDebugger --> VirtualMachine : uses
+MinimalDebugger --> EventRequestManager : uses
+MinimalDebugger --> EventQueue : uses
+MinimalDebugger --> ClassPrepareEvent : handles
+MinimalDebugger --> BreakpointEvent : handles
+MinimalDebugger --> VMDeathEvent : handles
+MinimalDebugger --> ThreadReference : uses in showStackFrames
+
+Event <|.. ClassPrepareEvent
+Event <|.. BreakpointEvent
+Event <|.. VMDeathEvent
+
+VirtualMachine --> EventRequestManager : creates
+EventRequestManager --> ClassPrepareRequest : creates
+EventRequestManager --> BreakpointRequest : creates
+VirtualMachine --> EventQueue : provides
+EventQueue --> EventSet : returns
+EventSet --> Event : contains
+
+ClassPrepareEvent --> ReferenceType : returns
+ReferenceType --> Method : returns
+Method --> Location : returns
+Method --> LocalVariable : returns
+BreakpointEvent --> ThreadReference : returns
+BreakpointEvent --> Location : returns
+ThreadReference --> StackFrame : returns
+StackFrame --> Location : returns
+StackFrame --> LocalVariable : uses
+LocalVariable --> Value : provides
+
+note right of MinimalDebugger::showStackFrames
+  Iterates over stack frames:
+  - Gets frames from ThreadReference
+  - For each frame:
+    - Checks method name via Method.name()
+    - If method is "fibonacci", gets variable "n" from LocalVariable
+    - Prints method name and value of "n"
+end note
+
+@enduml

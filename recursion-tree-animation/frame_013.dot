@@ -1,0 +1,31 @@
+digraph G {
+  graph [dpi=300];
+  node [shape=circle, width=1.0, height=1.0, fontsize=20];
+  node0 [label="fib(5)", style=filled, fillcolor=lightgray];
+  node1 [label="fib(4)", style=filled, fillcolor=lightgray];
+  node0 -> node1;
+  node2 [label="fib(3)", style=filled, fillcolor=lightgray];
+  node1 -> node2;
+  node3 [label="fib(2)", style=filled, fillcolor=lightgray];
+  node2 -> node3;
+  node4 [label="fib(1)", style=filled, fillcolor=lightgray];
+  node3 -> node4;
+  node5 [label="fib(0)", style=filled, fillcolor=lightgray];
+  node3 -> node5;
+  node6 [label="fib(1)", style=filled, fillcolor=lightgray];
+  node2 -> node6;
+  node7 [label="fib(2)", style=filled, fillcolor=lightgray];
+  node1 -> node7;
+  node8 [label="fib(1)", style=filled, fillcolor=lightgray];
+  node7 -> node8;
+  node9 [label="fib(0)", style=filled, fillcolor=lightgray];
+  node7 -> node9;
+  node10 [label="fib(3)", style=filled, fillcolor=lightgray];
+  node0 -> node10;
+  node11 [label="fib(2)", style=filled, fillcolor=lightgray];
+  node10 -> node11;
+  node12 [label="fib(1)", style=filled, fillcolor=lightgray];
+  node11 -> node12;
+  node13 [label="fib(0)", style=filled, fillcolor=yellow];
+  node11 -> node13;
+}

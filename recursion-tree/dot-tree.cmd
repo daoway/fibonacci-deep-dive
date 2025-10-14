@@ -1,0 +1,1 @@
+dot -Tpng fib_tree.dot -o fib_tree.png
