@@ -47,8 +47,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: latex-logs
-        path: |
-          book.log
+        path: book.log
 
     - name: Check for compilation errors
       run: |
@@ -56,17 +55,6 @@ jobs:
           echo "LaTeX compilation failed!"
           exit 1
         fi          
-
-    - name: Commit and Push PDF
-      uses: stefanzweifel/git-auto-commit-action@v5
-      with:
-        file_pattern: book.pdf
-        commit_message: 'CI: Auto-generated book.pdf from book.tex'
-        branch: ${{ github.ref_name }}
-        commit_user_name: GitHub Actions Bot
-        commit_user_email: actions@github.com
-      env:
-        GITHUB_TOKEN: ${{ secrets.PAT }}
 
     - name: Upload PDF as Artifact
       uses: actions/upload-artifact@v4
@@ -77,11 +65,18 @@ jobs:
     - name: Create pages folder
       run: mkdir -p book && cp book.pdf book/
 
-    - name: Deploy to GitHub Pages
+    - name: Upload Pages artifact
       uses: actions/upload-pages-artifact@v3
       with:
         path: 'book'
 
     - name: Deploy to GitHub Pages
       uses: actions/deploy-pages@v4
-      
+
+    - name: Create Release
+      uses: softprops/action-gh-release@v1
+      if: startsWith(github.ref, 'refs/tags/')
+      with:
+        files: book.pdf
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
