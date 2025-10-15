@@ -933,20 +933,10 @@ Space Complexity: $M(n) = \mathcal{O}(1)$
 
 \subsection{Computer Algebra Systems}
 Using Maple, we can compute Fibonacci numbers efficiently:
-
-\begin{lstlisting}[language=Maple,caption={Fibonacci in Maple}]
-	with(combinat, fibonacci);
-	fibonacci_numbers := seq(fibonacci(i), i = 0 .. 100000):
-	f := fopen("fibonacci_numbers.txt", WRITE):
-	for num in fibonacci_numbers do
-	fprintf(f, "%a\n", num);
-	end do:
-	fclose(f);
-\end{lstlisting}
-
+\lstinputlisting[language=Maple,caption={Fibonacci in Maple}]{./optimizing-recursion/fibonacci.mpl}
 Run with:
 \begin{lstlisting}[language=bash,caption={Running Maple Script}]
-	cmaple -q fibonacci.mpl >out.log
+cmaple -q fibonacci.mpl >out.log
 \end{lstlisting}
 
 \subsection{Binet formula in real life}
