@@ -10,7 +10,8 @@ public class RecursionDotTree {
 
     static int idCounter = 0;
 
-    public static int fib0(int n, FileWriter fw, NodeId parent) throws IOException {
+    public static int fib0(int n, FileWriter fw, NodeId parent)
+            throws IOException {
         int myId = idCounter++;
         fw.write(String.format("  node%d [label=\"fib(%d)\"];\n", myId, n));
 
@@ -30,12 +31,13 @@ public class RecursionDotTree {
         return result;
     }
 
-    public static void main(String[] args) throws IOException {
-        FileWriter fw = new FileWriter("fib_tree.dot");
-        fw.write("digraph G {\n");
-        fib0(5, fw, null);
-        fw.write("}\n");
-        fw.close();
-        System.out.println("DOT file generated: fib_tree.dot");
+    public static void main(String[] args){
+        try (FileWriter fw = new FileWriter("fib_tree.dot")) {
+            fw.write("digraph G {\n");
+            fib0(5, fw, null);
+            fw.write("}\n");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
