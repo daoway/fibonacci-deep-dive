@@ -152,13 +152,7 @@ The simplest approach to compute Fibonacci numbers is recursion, following the s
 Time Complexity: $T(n) = \mathcal{O}(2^n)$ \\
 Space Complexity: $M(n) = \mathcal{O}(n)$ (due to call stack depth)
 
-\begin{lstlisting}[caption={Naive Recursive Fibonacci in Java}]
-public static int fib0(int n) {
-    if (n == 0) return 0;
-    if (n == 1) return 1;
-    return fib0(n - 1) + fib0(n - 2);
-}
-\end{lstlisting}
+\lstinputlisting[language=Java,caption={Naive Recursive Fibonacci in Java}]{./optimizing-recursion/NaiveRecursion.java}
 
 This method is intuitive but inefficient due to redundant calculations, forming a binary recursion tree with approximately $2^n$ nodes.
 
@@ -636,39 +630,12 @@ It means that even without calculating something, we limited by the value of sta
 %%%%%%%%%%%%%%%%%%%%%
 \subsection{Recursion Tree}
 %% todo
-\begin{lstlisting}[language=Java]
-public class Simple {
-	static int depth = 0;
-	
-	public static int fib0(int n) throws Exception{
-		depth++;
-		System.out.println("fib0(" + n + ") depth=" + depth + " frames=" + Thread.currentThread().getStackTrace().length);
-		
-		if (n == 0) {
-			depth--;
-			return 0;
-		}
-		if (n == 1) {
-			depth--;
-			return 1;
-		}
-		
-		int result = fib0(n - 1) + fib0(n - 2);
-		depth--;
-		return result;
-	}
-	
-	public static void main(String[] args) throws Exception {
-		System.out.println("Result: " + fib0(5));
-	}
-}
-\end{lstlisting}
-
+\lstinputlisting[language=Java,caption={Recursion StackTrace}]{./recursion-tree/StackTraceDepth.java}
 We have to have compare depth calculation and number of frames, make conclusions.
 
 Output : 
 \begin{lstlisting}[language=bash]
-C:\temp\fibonacci-article>java Simple
+> java StackTraceDepth
 fib0(5) depth=1 frames=3
 fib0(4) depth=2 frames=4
 fib0(3) depth=3 frames=5
