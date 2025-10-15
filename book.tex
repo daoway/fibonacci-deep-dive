@@ -840,37 +840,11 @@ Space Complexity: $M(n) = \mathcal{O}(n)$
 
 \subsection{Dynamic Programming}
 Dynamic programming (DP) avoids recursion entirely. We present two variants: array-based and space-optimized.
+\lstinputlisting[language=Java,caption={Array-Based DP Fibonacci}]{./optimizing-recursion/ArrayDP.java}
 
-\begin{lstlisting}[caption={Array-Based DP Fibonacci}]
-	public static int fibDPArray(int n) {
-		if (n <= 0) return 0;
-		int[] fib = new int[n + 1];
-		fib[0] = 0;
-		fib[1] = 1;
-		for (int i = 2; i <= n; i++) {
-			fib[i] = fib[i - 1] + fib[i - 2];
-		}
-		return fib[n];
-	}
-\end{lstlisting}
-
-\begin{lstlisting}[caption={Space-Optimized DP Fibonacci}]
-	public static int fibDPOptimized(int n) {
-		if (n <= 0) return 0;
-		if (n == 1) return 1;
-		int prev = 0, curr = 1;
-		for (int i = 2; i <= n; i++) {
-			int next = prev + curr;
-			prev = curr;
-			curr = next;
-		}
-		return curr;
-	}
-\end{lstlisting}
-
+\lstinputlisting[language=Java,caption={Space-Optimized DP Fibonacci}]{./optimizing-recursion/IterativeFibonacci.java}
 Time Complexity: $T(n) = \mathcal{O}(n)$ \\
 Space Complexity: $M(n) = \mathcal{O}(1)$ (optimized version)
-
 
 \subsection{Linear algebra and Fibonacci}
 \subsubsection{Matrices and Transformations}
@@ -951,34 +925,8 @@ To find later terms, we use matrix powers:
 This is what we were looking for - recurrence relation in matrix form for Fibonacci numbers. We'll visualize (\ref{matrix_fib}) later because it's fun.
 
 \subsubsection{Algorithm implementation in Java}
-\begin{lstlisting}[caption={Matrix Exponentiation for Fibonacci}]
-	public static long fibonacciMatrix(int n) {
-		if (n <= 0) return 0;
-		long[][] matrix = {{1, 1}, {1, 0}};
-		long[][] result = matrixPower(matrix, n - 1);
-		return result[0][0];
-	}
-	
-	static long[][] matrixPower(long[][] matrix, int n) {
-		int row = matrix.length;
-		long[][] result = {{1, 0}, {0, 1}};
-		while (n > 0) {
-			if (n % 2 == 1) result = matrixMultiply(result, matrix);
-			matrix = matrixMultiply(matrix, matrix);
-			n /= 2;
-		}
-		return result;
-	}
-	
-	static long[][] matrixMultiply(long[][] a, long[][] b) {
-		long[][] result = new long[2][2];
-		for (int i = 0; i < 2; i++)
-		for (int j = 0; j < 2; j++)
-		for (int k = 0; k < 2; k++)
-		result[i][j] += a[i][k] * b[k][j];
-		return result;
-	}
-\end{lstlisting}
+\lstinputlisting[language=Java,caption={Fibonacci by Matrix exponentiation}]{./optimizing-recursion/MatrixFibonacci.java}
+
 \subsubsection{Time and space complexity}
 Time Complexity: $T(n) = \mathcal{O}(\log n)$ \\
 Space Complexity: $M(n) = \mathcal{O}(1)$
