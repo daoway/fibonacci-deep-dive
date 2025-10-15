@@ -832,22 +832,11 @@ The recursive Fibonacci algorithm has:
 \subsection{Memoization}
 Memoization stores computed values to avoid redundant calculations.
 
+\lstinputlisting[language=Java,caption={Memoized Fibonacci}]{./optimizing-recursion/Memoization.java}
+
 Time Complexity: $T(n) = \mathcal{O}(n)$ \\
 Space Complexity: $M(n) = \mathcal{O}(n)$
 
-\begin{lstlisting}[caption={Memoized Fibonacci}]
-	import java.util.HashMap;
-	import java.util.Map;
-	
-	private static final Map<Integer, Integer> memo = new HashMap<>();
-	public static int fibMemo(int n) {
-		if (n <= 1) return n;
-		if (memo.containsKey(n)) return memo.get(n);
-		int result = fibMemo(n - 1) + fibMemo(n - 2);
-		memo.put(n, result);
-		return result;
-	}
-\end{lstlisting}
 
 \subsection{Dynamic Programming}
 Dynamic programming (DP) avoids recursion entirely. We present two variants: array-based and space-optimized.

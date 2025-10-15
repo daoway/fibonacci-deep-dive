@@ -27,6 +27,7 @@
                                 <source>recursion-tree</source>
                                 <source>recursion-tree-animation</source>
                                 <source>recursive-time-exec</source>
+                                <source>optimizing-recursion</source>
                             </sources>
                         </configuration>
                     </execution>
