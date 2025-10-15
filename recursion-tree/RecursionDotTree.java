@@ -15,6 +15,7 @@ public class RecursionDotTree {
         }
 
         int result;
+
         if (n == 0) {
             result = 0;
         } else if (n == 1) {
