@@ -600,26 +600,7 @@ TCO support varies across languages, impacting recursion efficiency:
 %%\subsection{Depth and \lstinline[style=keyword]\{StackOverflow\}}
 \subsection{Depth and \lstinline[basicstyle=\ttfamily\small]{StackOverflow}}
 Recursive calls create stack frames in the JVM, which can lead to a \texttt{StackOverflowError}. We demonstrate this with a simple recursive program :
-
-\begin{lstlisting}[caption={Testing Recursion Depth in Java}]
-	public class RecursionDepth {
-		private static int depth = 0;
-		
-		public static void recurse() {
-			depth++;
-			recurse();
-		}
-		
-		public static void main(String[] args) {
-			try {
-				recurse();
-			} catch (StackOverflowError e) {
-				System.out.println("Max recursion depth: " + depth);
-			}
-		}
-	}
-\end{lstlisting}
-
+\lstinputlisting[language=Java,caption={Testing Recursion Depth}]{./recursion-tree/RecursionDepth.java}
 Run with:
 \begin{lstlisting}[language=bash,caption={Running RecursionDepth}]
 	java -Xss1m RecursionDepth
