@@ -1,7 +1,7 @@
 import java.io.FileWriter;
 import java.io.IOException;
 
-public class Simple3 {
+public class RecursionDotTree {
 
     static class NodeId {
         int id;

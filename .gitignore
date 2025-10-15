@@ -12,3 +12,5 @@
 *.cls
 *.sty
 book.pdf
+target
+.idea
