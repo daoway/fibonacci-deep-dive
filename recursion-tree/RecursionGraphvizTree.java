@@ -44,11 +44,17 @@ public class RecursionGraphvizTree {
         fib(5, g, null);
 
         Graphviz.fromGraph(g)
+                .scale(3.0)
                 .render(Format.PNG)
                 .toFile(new File("fib_tree.png"));
 
         Graphviz.fromGraph(g)
                 .render(Format.DOT)
                 .toFile(new File("fib_tree.dot"));
+
+        Graphviz.fromGraph(g)
+                .scale(3.0)
+                .render(Format.SVG)
+                .toFile(new File("fib_tree.svg"));
     }
 }
