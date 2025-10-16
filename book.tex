@@ -152,7 +152,7 @@ The simplest approach to compute Fibonacci numbers is recursion, following the s
 \lstinputlisting[language=Java,caption={Naive Recursive Fibonacci in Java}]{./optimizing-recursion/NaiveRecursion.java}
 
 Also we introduce common interface for Fibonacci algorithms to compare them later.
-\lstinputlisting[language=Java,caption={Fibonacci interface}, ,nolol]{./optimizing-recursion/FibonacciNumber.java}
+\lstinputlisting[language=Java,caption={Fibonacci interface}, nolol]{./optimizing-recursion/FibonacciSequence.java}
 
 This method is intuitive but inefficient due to redundant calculations, forming a binary recursion tree with approximately $2^n$ nodes. Which comes from the fact that each call to \( F(n) \) results in two further calls for \( F(n-1) \) and \( F(n-2) \).
 It's simmilar to binary tree where each node has two children. The depth of this tree is \( n \), and the number of nodes grows exponentially with \( n \).
@@ -605,7 +605,7 @@ TCO support varies across languages, impacting recursion efficiency:
 Recursive calls create stack frames in the JVM, which can lead to a \texttt{StackOverflowError}. We demonstrate this with a simple recursive program :
 \lstinputlisting[language=Java,caption={Testing Recursion Depth}]{./recursion-tree/RecursionDepth.java}
 Run with:
-\begin{lstlisting}[language=bash,caption={Running RecursionDepth}]
+\begin{lstlisting}[language=bash,caption={Running RecursionDepth}, nolol]
 	java -Xss1m RecursionDepth
 \end{lstlisting}
 
@@ -735,7 +735,7 @@ Then run debugger :
 \end{lstlisting}
 
 Exploring debugger output : 
-\lstinputlisting[language=bash, caption={Call frames in Java Debugger}]{./fibonacci-debugger/debugger-output.txt}
+\lstinputlisting[language=bash, caption={Call frames in Java Debugger}, nolol]{./fibonacci-debugger/debugger-output.txt}
 
 Debugger class diagram shown here
 
@@ -924,7 +924,7 @@ For large $n$, matrix exponentiation or BigDecimal-based DP are recommended. Fut
 \subsection{When double goes wild}
 \subsubsection{$0.1 + 0.2 \ne 0.3$}
 In Java, when running the program
-\lstinputlisting[language=Java,caption={Unexpected sum jn Java}]{./data-types-limitations/DoubleExample.java}
+\lstinputlisting[language=Java,caption={Unexpected sum jn Java}, nolol]{./data-types-limitations/DoubleExample.java}
 the output is
 \begin{verbatim}
 	0.30000000000000004
@@ -933,9 +933,9 @@ instead of exactly \texttt{0.3}. \\
 
 If you think Java is broken, try it in JavaScript or Python\\
 JavaScript:
-\lstinputlisting[language=JavaScript,caption={Unexpected sum in JavaScript}]{./data-types-limitations/DoubleExample.js}
+\lstinputlisting[language=JavaScript,caption={Unexpected sum in JavaScript}, nolol]{./data-types-limitations/DoubleExample.js}
 Python:
-\lstinputlisting[language=Python,caption={Unexpected sum in Python}]{./data-types-limitations/DoubleExample.py}
+\lstinputlisting[language=Python,caption={Unexpected sum in Python}, nolol]{./data-types-limitations/DoubleExample.py}
 Output :
 \begin{lstlisting}[language=bash]
 >java DoubleExample
