@@ -1,22 +1,31 @@
-import com.sun.jdi.*;
-import com.sun.jdi.event.*;
-
-import java.io.IOException;
-import java.util.*;
+import com.sun.jdi.AbsentInformationException;
 import com.sun.jdi.Bootstrap;
+import com.sun.jdi.IncompatibleThreadStateException;
+import com.sun.jdi.LocalVariable;
+import com.sun.jdi.Location;
+import com.sun.jdi.Method;
+import com.sun.jdi.ReferenceType;
+import com.sun.jdi.StackFrame;
 import com.sun.jdi.ThreadReference;
 import com.sun.jdi.Value;
+import com.sun.jdi.VirtualMachine;
 import com.sun.jdi.VirtualMachineManager;
 import com.sun.jdi.connect.AttachingConnector;
 import com.sun.jdi.connect.Connector;
 import com.sun.jdi.connect.IllegalConnectorArgumentsException;
 import com.sun.jdi.event.BreakpointEvent;
 import com.sun.jdi.event.ClassPrepareEvent;
+import com.sun.jdi.event.Event;
+import com.sun.jdi.event.EventQueue;
 import com.sun.jdi.event.EventSet;
 import com.sun.jdi.event.VMDeathEvent;
 import com.sun.jdi.request.BreakpointRequest;
 import com.sun.jdi.request.ClassPrepareRequest;
 import com.sun.jdi.request.EventRequestManager;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 
 public class MinimalDebugger {
     private VirtualMachine vm;
@@ -118,49 +127,44 @@ public class MinimalDebugger {
     }
 
     private void handleBreakpoint(BreakpointEvent event) {
+        ThreadReference thread = event.thread();
+        StackFrame frame;
         try {
-            ThreadReference thread = event.thread();
-            StackFrame frame = thread.frame(0);
-            Location location = frame.location();
-            String methodName = location.method().name();
+            frame = thread.frame(0);
+        } catch (IncompatibleThreadStateException e) {
+            throw new RuntimeException(e);
+        }
+        Location location = frame.location();
+        String methodName = location.method().name();
 
-            System.out.println("BREAKPOINT in " + methodName + "() at line " +
-                    location.lineNumber());
+        System.out.println("BREAKPOINT in " + methodName + "() at line " +
+                location.lineNumber());
 
-            if ("main".equals(methodName)) {
-                System.out.println("=== PROGRAM STARTED ===");
-                return;
+        if ("main".equals(methodName)) {
+            System.out.println("=== PROGRAM STARTED ===");
+            return;
+        }
+
+        if ("fibonacci".equals(methodName)) {
+            Value nValue = null;
+            List<LocalVariable> variables;
+            try {
+                variables = location.method().variables();
+            } catch (AbsentInformationException e) {
+                throw new RuntimeException(e);
             }
-
-            if ("fibonacci".equals(methodName)) {
-                Value nValue = null;
-                try {
-                    List<LocalVariable> variables =
-                            location.method().variables();
-                    for (LocalVariable localVariable : variables) {
-                        if ("n".equals(localVariable.name())) {
-                            nValue = frame.getValue(localVariable);
-                            break;
-                        }
-                    }
-                } catch (Exception varError) {
-                    System.out.println("Cannot get variable 'n': " +
-                            varError.getMessage());
+            for (LocalVariable localVariable : variables) {
+                if ("n".equals(localVariable.name())) {
+                    nValue = frame.getValue(localVariable);
+                    break;
                 }
-
-                if (nValue != null) {
-                    System.out.println("=== fibonacci(" + nValue + ") ===");
-                } else {
-                    System.out.println("=== fibonacci(?) ===");
-                }
-
-                showStackFrames(thread);
             }
-
-        } catch (Exception e) {
-            System.err.println("Error in breakpoint handler: " +
-                    e.getClass().getSimpleName() + " - " + e.getMessage());
-            e.printStackTrace();
+            if (nValue != null) {
+                System.out.println("=== fibonacci(" + nValue + ") ===");
+            } else {
+                System.out.println("=== fibonacci(?) ===");
+            }
+            showStackFrames(thread);
         }
     }
 
@@ -171,7 +175,7 @@ public class MinimalDebugger {
 
             System.out.println("Stack depth: " + frames.size());
 
-            for (int i = 0; i < Math.min(frames.size(), 10); i++) {
+            for (int i = 0; i < frames.size(); i++) {
                 StackFrame frame = frames.get(i);
                 Location location = frame.location();
                 String methodName = location.method().name();
@@ -197,12 +201,6 @@ public class MinimalDebugger {
                     System.out.println("  [" + i + "] " + methodName + "()");
                 }
             }
-
-            if (frames.size() > 10) {
-                System.out.println(
-                        "  ... and " + (frames.size() - 10) + " more frames");
-            }
-
             System.out.println("Fibonacci calls in stack: " + fibonacciCount);
             System.out.println();
 
