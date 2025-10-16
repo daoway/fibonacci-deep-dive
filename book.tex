@@ -993,27 +993,9 @@ The result \texttt{0.30000000000000004} is not an error, but the inevitable
 effect of representing decimal fractions in binary with limited precision.
 Understanding IEEE 754 is essential for writing correct numerical programs.
 
-\subsection{Handling Large Numbers with BigDecimal}
-The \texttt{int} and \texttt{long} types in Java overflow for large Fibonacci numbers (e.g., $F_{93}$ exceeds \texttt{long}). We use \texttt{BigDecimal} for arbitrary-precision arithmetic to address this limitation.
-
-\begin{lstlisting}[caption={Fibonacci with BigDecimal}]
-import java.math.BigDecimal;
-
-public static BigDecimal fibBigDecimal(int n) {
-    if (n <= 0) return BigDecimal.ZERO;
-    if (n == 1) return BigDecimal.ONE;
-    
-    BigDecimal prev = BigDecimal.ZERO;
-    BigDecimal curr = BigDecimal.ONE;
-    for (int i = 2; i <= n; i++) {
-        BigDecimal next = prev.add(curr);
-        prev = curr;
-        curr = next;
-    }
-    return curr;
-}
-\end{lstlisting}
-
+\subsection{Handling Large Numbers with BigInteger}
+The \texttt{int} and \texttt{long} types in Java overflow for large Fibonacci numbers (e.g., $F_{93}$ exceeds \texttt{long}). We use \texttt{BigInteger} for arbitrary-precision arithmetic to address this limitation.
+\lstinputlisting[language=Java,caption={BigInteger Fibonacci}]{./data-types-limitations/BigIntegerFibonacci.java}
 Time Complexity: $T(n) = \mathcal{O}(n \cdot M)$, where $M$ is the cost of BigDecimal operations. \\
 Space Complexity: $M(n) = \mathcal{O}(1)$
 
