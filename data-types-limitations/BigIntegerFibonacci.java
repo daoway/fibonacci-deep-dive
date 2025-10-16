@@ -1,7 +1,8 @@
 import java.math.BigInteger;
 
-public class BigIntegerFibonacci {
-    public static BigInteger fib(int n) {
+public class BigIntegerFibonacci implements FibonacciSequence<BigInteger> {
+    @Override
+    public BigInteger fib(int n) {
         if (n <= 0) {
             return BigInteger.ZERO;
         }
