@@ -1,18 +1,17 @@
-public class IterativeFibonacci {
-    public static int fibDPOptimized(int n) {
+public class IterativeFibonacci implements FibonacciSequence<Long> {
+    public Long fib(int n) {
         if (n <= 0) {
-            return 0;
+            return 0L;
         }
         if (n == 1) {
-            return 1;
+            return 1L;
         }
-        int prev = 0, curr = 1;
+        long prev = 0, curr = 1;
         for (int i = 2; i <= n; i++) {
-            int next = prev + curr;
+            long next = prev + curr;
             prev = curr;
             curr = next;
         }
         return curr;
     }
-
 }

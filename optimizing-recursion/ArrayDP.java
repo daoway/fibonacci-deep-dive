@@ -1,9 +1,10 @@
-public class ArrayDP {
-    public static int fibDPArray(int n) {
+public class ArrayDP implements FibonacciSequence<Long> {
+    @Override
+    public Long fib(int n) {
         if (n <= 0) {
-            return 0;
+            return 0L;
         }
-        int[] fib = new int[n + 1];
+        long[] fib = new long[n + 1];
         fib[0] = 0;
         fib[1] = 1;
         for (int i = 2; i <= n; i++) {

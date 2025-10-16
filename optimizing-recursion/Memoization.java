@@ -1,17 +1,18 @@
 import java.util.HashMap;
 import java.util.Map;
 
-public class Memoization {
-    private static final Map<Integer, Integer> memo = new HashMap<>();
+public class Memoization implements FibonacciSequence<Long> {
+    private final Map<Integer, Long> memo = new HashMap<>();
 
-    public static int fibMemo(int n) {
+    @Override
+    public Long fib(int n) {
         if (n <= 1) {
-            return n;
+            return (long) n;
         }
         if (memo.containsKey(n)) {
             return memo.get(n);
         }
-        int result = fibMemo(n - 1) + fibMemo(n - 2);
+        long result = fib(n - 1) + fib(n - 2);
         memo.put(n, result);
         return result;
     }
