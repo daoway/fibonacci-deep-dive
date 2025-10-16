@@ -1,4 +1,4 @@
-public class NaiveRecursion implements FibonacciNumber<Long> {
+public class NaiveRecursion implements FibonacciSequence<Long> {
     public Long fib(int n) {
         if (n == 0) {
             return 0L;

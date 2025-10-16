@@ -6,11 +6,11 @@ public class MeasureExecTime {
     private static final String CSV_HEADER = "n,Fn,time_sec";
 
     public static void main(String[] args) {
-        FibonacciNumber<Long> naiveFibonacci = new NaiveRecursion();
+        FibonacciSequence<Long> naiveFibonacci = new NaiveRecursion();
         measure(naiveFibonacci, "fibonacci_data.csv", 50);
     }
 
-    private static void measure(FibonacciNumber<Long> algorithmImpl,
+    private static void measure(FibonacciSequence<Long> algorithmImpl,
                                 String filename, int count) {
         try (PrintWriter writer = new PrintWriter(new FileWriter(filename))) {
             writer.println(CSV_HEADER);
