@@ -1,15 +1,15 @@
-public class MatrixFibonacci {
-    public static long fibonacciMatrix(int n) {
+public class MatrixFibonacci implements FibonacciSequence<Long> {
+    @Override
+    public Long fib(int n) {
         if (n <= 0) {
-            return 0;
+            return 0L;
         }
         long[][] matrix = {{1, 1}, {1, 0}};
         long[][] result = matrixPower(matrix, n - 1);
         return result[0][0];
     }
 
-    static long[][] matrixPower(long[][] matrix, int n) {
-        int row = matrix.length;
+    private long[][] matrixPower(long[][] matrix, int n) {
         long[][] result = {{1, 0}, {0, 1}};
         while (n > 0) {
             if (n % 2 == 1) {
@@ -21,7 +21,7 @@ public class MatrixFibonacci {
         return result;
     }
 
-    static long[][] matrixMultiply(long[][] a, long[][] b) {
+    private long[][] matrixMultiply(long[][] a, long[][] b) {
         long[][] result = new long[2][2];
         for (int i = 0; i < 2; i++) {
             for (int j = 0; j < 2; j++) {
