@@ -91,13 +91,14 @@ public class MinimalDebugger {
                 break;
             }
             for (Event event : eventSet) {
-                if (event instanceof ClassPrepareEvent) {
-                    handleClassPrepare((ClassPrepareEvent) event);
-                } else if (event instanceof BreakpointEvent) {
-                    handleBreakpoint((BreakpointEvent) event);
-                } else if (event instanceof VMDeathEvent) {
-                    System.out.println("Target VM terminated");
-                    return;
+                switch (event) {
+                    case ClassPrepareEvent cpe -> handleClassPrepare(cpe);
+                    case BreakpointEvent bpe -> handleBreakpoint(bpe);
+                    case VMDeathEvent vmd -> {
+                        System.out.println("Target VM terminated");
+                        return;
+                    }
+                    default -> {} // Ignore other event types
                 }
             }
 
