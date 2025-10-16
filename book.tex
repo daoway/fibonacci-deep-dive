@@ -718,10 +718,13 @@ O(n).
 The total number of recursive calls is exponential, which might suggest exponential memory usage. However, since only one path of the recursion tree is active at a time, the call stack grows linearly with \( n \), not exponentially.
 
 \subsection{JVM Debugger view}
+To show how recursion works in JVM, we can use Java Debug Interface (JDI) to create a simple debugger. Subject of our interest is call stack, so we will set breakpoint in Fibonacci method and step into it.
+Here it is:
 \lstinputlisting[language=Java, caption={Minimal Debugger}]{./fibonacci-debugger/MinimalDebugger.java}
-And target : 
-\lstinputlisting[language=Java, caption={Debugger Target}]{./fibonacci-debugger/FibonacciTarget.java}
-We should compile it with debugging info : 
+We are not reuse previous Fibonacci code, but create a new one for debugger target :
+\lstinputlisting[language=Java, caption={Debugger Target}, nolol]{./fibonacci-debugger/FibonacciTarget.java}
+It has main method, so we can set breakpoint there and step into Fibonacci method.
+We should compile it with debugging info enabled :
 \begin{lstlisting}[language=bash]
 	javac -g -cp .;%JAVA_HOME%/lib/tools.jar *.java
 \end{lstlisting}
@@ -729,6 +732,7 @@ To run app in debug mode we use this:
 \begin{lstlisting}[language=bash]
 	java -cp .;%JAVA_HOME%/lib/tools.jar -agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005 FibonacciTarget
 \end{lstlisting}
+It will wait for debugger to attach to port 5005. Execution staarts when debugger attaches.
 Then run debugger : 
 \begin{lstlisting}[language=bash]
 	java -cp .;%JAVA_HOME%/lib/tools.jar MinimalDebugger
