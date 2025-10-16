@@ -25,11 +25,7 @@ public class RecursionGraphvizTree {
         return switch (n) {
             case 0 -> 0;
             case 1 -> 1;
-            default -> {
-                int left = fib(n - 1, graph, myNode);
-                int right = fib(n - 2, graph, myNode);
-                yield left + right;
-            }
+            default -> fib(n - 1, graph, myNode) + fib(n - 2, graph, myNode);
         };
     }
 
