@@ -105,5 +105,5 @@ jobs:
             owner: context.repo.owner,
             repo: context.repo.repo,
             title: 'Build Failed',
-            body: `LaTeX compilation failed\n\nCommit: ${context.sha}`
+            body: `LaTeX compilation failed\n\nCommit: ${context.sha}\n\n[View logs in Actions](https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId})`
           })
