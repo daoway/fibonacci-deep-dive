@@ -6,19 +6,16 @@ import guru.nidi.graphviz.model.MutableNode;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.UUID;
 
 import static guru.nidi.graphviz.model.Factory.mutGraph;
 import static guru.nidi.graphviz.model.Factory.mutNode;
 
 public class RecursionGraphvizTree {
-
-    private static int idCounter = 0;
-
     public static int fib(int n, MutableGraph graph, MutableNode parent) {
-        int myId = idCounter++;
-
         MutableNode myNode =
-                mutNode("fib" + myId).add(Label.of("fib(" + n + ")"));
+                mutNode("fib_" + UUID.randomUUID()).add(
+                        Label.of("fib(" + n + ")"));
         graph.add(myNode);
 
         if (parent != null) {
@@ -40,19 +37,19 @@ public class RecursionGraphvizTree {
     }
 
     public static void main(String[] args) throws IOException {
-        MutableGraph g = mutGraph("Fibonacci").setDirected(true);
-        fib(5, g, null);
+        MutableGraph graph = mutGraph("Fibonacci").setDirected(true);
+        fib(5, graph, null);
 
-        Graphviz.fromGraph(g)
+        Graphviz.fromGraph(graph)
                 .scale(3.0)
                 .render(Format.PNG)
                 .toFile(new File("fib_tree.png"));
 
-        Graphviz.fromGraph(g)
+        Graphviz.fromGraph(graph)
                 .render(Format.DOT)
                 .toFile(new File("fib_tree.dot"));
 
-        Graphviz.fromGraph(g)
+        Graphviz.fromGraph(graph)
                 .scale(3.0)
                 .render(Format.SVG)
                 .toFile(new File("fib_tree.svg"));
