@@ -22,18 +22,15 @@ public class RecursionGraphvizTree {
             parent.addLink(myNode);
         }
 
-        int result;
-        if (n == 0) {
-            result = 0;
-        } else if (n == 1) {
-            result = 1;
-        } else {
-            int left = fib(n - 1, graph, myNode);
-            int right = fib(n - 2, graph, myNode);
-            result = left + right;
-        }
-
-        return result;
+        return switch (n) {
+            case 0 -> 0;
+            case 1 -> 1;
+            default -> {
+                int left = fib(n - 1, graph, myNode);
+                int right = fib(n - 2, graph, myNode);
+                yield left + right;
+            }
+        };
     }
 
     public static void main(String[] args) throws IOException {
