@@ -1,5 +1,5 @@
-public class NaiveRecursion {
-    public int fib(int n) {
+public class NaiveRecursion implements FibonacciNumber<Integer> {
+    public Integer fib(int n) {
         if (n == 0) {
             return 0;
         }

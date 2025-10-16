@@ -147,14 +147,17 @@ Recursion and mathematical induction share a fundamental approach: solving or pr
 
 \section{Naive Recursion}
 \subsection{Algorithm in Java}
-The simplest approach to compute Fibonacci numbers is recursion, following the sequence's definition.
-
-Time Complexity: $T(n) = \mathcal{O}(2^n)$ \\
-Space Complexity: $M(n) = \mathcal{O}(n)$ (due to call stack depth)
+The simplest approach to compute Fibonacci numbers is recursion, following the sequence's definition. We have base case conditions for \( F(0) \) and \( F(1) \), and for \( n \geq 2 \), we recursively compute \( F(n-1) + F(n-2) \).
 
 \lstinputlisting[language=Java,caption={Naive Recursive Fibonacci in Java}]{./optimizing-recursion/NaiveRecursion.java}
 
-This method is intuitive but inefficient due to redundant calculations, forming a binary recursion tree with approximately $2^n$ nodes.
+Also we introduce common interface for Fibonacci algorithms to compare them later.
+\lstinputlisting[language=Java,caption={Fibonacci interface}]{./optimizing-recursion/FibonacciNumber.java}
+
+This method is intuitive but inefficient due to redundant calculations, forming a binary recursion tree with approximately $2^n$ nodes. Which comes from the fact that each call to \( F(n) \) results in two further calls for \( F(n-1) \) and \( F(n-2) \).
+It's simmilar to binary tree where each node has two children. The depth of this tree is \( n \), and the number of nodes grows exponentially with \( n \).
+Later, we will explore optimizations to improve performance. Now, let's analyze the time complexity of this naive recursive approach.
+We start from the derivation of Binet's formula, which provides a closed-form expression for Fibonacci numbers in a form of $F(n)$ without elements of previous sequence.
 
 \subsection{Binet's formula}
 \subsubsection{Intuitive Explanation}
