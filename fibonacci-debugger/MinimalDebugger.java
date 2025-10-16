@@ -15,20 +15,14 @@ public class MinimalDebugger {
     
     public void debug() {
         try {
-            // 1. Підключаємося до цільової програми
             connect();
-            
-            // 2. Встановлюємо breakpoint
             setBreakpoint();
-            
-            // 3. Запускаємо програму
             vm.resume();
-            
-            // 4. Обробляємо події
             handleEvents();
-            
-        } catch (Exception e) {
+        } catch (IllegalConnectorArgumentsException | IOException e) {
             System.err.println("Error: " + e.getMessage());
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
         }
     }
     
@@ -52,7 +46,6 @@ public class MinimalDebugger {
     }
     
     private void setBreakpoint() {
-        // Чекаємо завантаження класу
         ClassPrepareRequest classPrepareRequest = eventManager.createClassPrepareRequest();
         classPrepareRequest.addClassFilter("FibonacciTarget");
         classPrepareRequest.enable();
@@ -82,8 +75,7 @@ public class MinimalDebugger {
     private void handleClassPrepare(ClassPrepareEvent event) {
         ReferenceType clazz = event.referenceType();
         System.out.println("Class loaded: " + clazz.name());
-        
-        // Встановлюємо breakpoint на початку main методу
+        // breakpoint at the start of main method
         try {
             Method mainMethod = clazz.methodsByName("main").get(0);
             BreakpointRequest mainBp = eventManager.createBreakpointRequest(mainMethod.location());
@@ -92,8 +84,7 @@ public class MinimalDebugger {
         } catch (Exception e) {
             System.err.println("Failed to set main breakpoint: " + e.getMessage());
         }
-        
-        // Встановлюємо breakpoint в методі fibonacci
+        // breakpoint at the start of fibonacci method
         try {
             Method fibMethod = clazz.methodsByName("fibonacci").get(0);
             BreakpointRequest fibBp = eventManager.createBreakpointRequest(fibMethod.location());
@@ -119,13 +110,12 @@ public class MinimalDebugger {
             }
             
             if ("fibonacci".equals(methodName)) {
-                // Безпечно отримуємо параметр n
                 Value nValue = null;
                 try {
                     List<LocalVariable> variables = location.method().variables();
-                    for (LocalVariable var : variables) {
-                        if ("n".equals(var.name())) {
-                            nValue = frame.getValue(var);
+                    for (LocalVariable localVariable : variables) {
+                        if ("n".equals(localVariable.name())) {
+                            nValue = frame.getValue(localVariable);
                             break;
                         }
                     }
