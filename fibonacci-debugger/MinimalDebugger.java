@@ -169,9 +169,13 @@ public class MinimalDebugger {
     }
 
     private void showStackFrames(ThreadReference thread) {
+        List<StackFrame> frames;
         try {
-            List<StackFrame> frames = thread.frames();
-            int fibonacciCount = 0;
+            frames = thread.frames();
+        } catch (IncompatibleThreadStateException e) {
+            throw new RuntimeException(e);
+        }
+        int fibonacciCount = 0;
 
             System.out.println("Stack depth: " + frames.size());
 
@@ -182,8 +186,12 @@ public class MinimalDebugger {
 
                 if ("fibonacci".equals(methodName)) {
                     String nValue = "?";
-                    List<LocalVariable> variables =
-                            location.method().variables();
+                    List<LocalVariable> variables;
+                    try {
+                        variables = location.method().variables();
+                    } catch (AbsentInformationException e) {
+                        throw new RuntimeException(e);
+                    }
                     for (LocalVariable localVariable : variables) {
                         if ("n".equals(localVariable.name())) {
                             Value value = frame.getValue(localVariable);
@@ -202,12 +210,5 @@ public class MinimalDebugger {
                 }
             }
             System.out.println("Fibonacci calls in stack: " + fibonacciCount);
-            System.out.println();
-
-        } catch (Exception e) {
-            System.err.println(
-                    "Error showing stack: " + e.getClass().getSimpleName() +
-                            " - " + e.getMessage());
-        }
     }
 }
