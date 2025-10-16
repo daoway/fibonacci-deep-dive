@@ -152,7 +152,7 @@ The simplest approach to compute Fibonacci numbers is recursion, following the s
 \lstinputlisting[language=Java,caption={Naive Recursive Fibonacci in Java}]{./optimizing-recursion/NaiveRecursion.java}
 
 Also we introduce common interface for Fibonacci algorithms to compare them later.
-\lstinputlisting[language=Java,caption={Fibonacci interface}]{./optimizing-recursion/FibonacciNumber.java}
+\lstinputlisting[language=Java,caption={Fibonacci interface}, ,nolol]{./optimizing-recursion/FibonacciNumber.java}
 
 This method is intuitive but inefficient due to redundant calculations, forming a binary recursion tree with approximately $2^n$ nodes. Which comes from the fact that each call to \( F(n) \) results in two further calls for \( F(n-1) \) and \( F(n-2) \).
 It's simmilar to binary tree where each node has two children. The depth of this tree is \( n \), and the number of nodes grows exponentially with \( n \).
