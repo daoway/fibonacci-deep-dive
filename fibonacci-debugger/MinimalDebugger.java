@@ -28,6 +28,11 @@ import java.util.List;
 import java.util.Map;
 
 public class MinimalDebugger {
+    private static final String TARGET_CLASS = "FibonacciTarget";
+    private static final String MAIN_METHOD = "main";
+    private static final String FIBONACCI_METHOD = "fibonacci";
+    private static final String PARAM_NAME = "n";
+
     private VirtualMachine vm;
     private EventRequestManager eventManager;
 
@@ -59,7 +64,7 @@ public class MinimalDebugger {
         try {
             vm = connector.attach(args);
         } catch (IOException | IllegalConnectorArgumentsException e) {
-            System.err.println("Error: " + e.getMessage());
+            throw new RuntimeException("Failed to connect: " + e.getMessage(), e);
         }
         eventManager = vm.eventRequestManager();
 
@@ -69,7 +74,7 @@ public class MinimalDebugger {
     private void setBreakpoint() {
         ClassPrepareRequest classPrepareRequest =
                 eventManager.createClassPrepareRequest();
-        classPrepareRequest.addClassFilter("FibonacciTarget");
+        classPrepareRequest.addClassFilter(TARGET_CLASS);
         classPrepareRequest.enable();
     }
 
@@ -82,6 +87,7 @@ public class MinimalDebugger {
                 eventSet = queue.remove();
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
+                System.out.println("Event handling interrupted");
                 break;
             }
             for (Event event : eventSet) {
@@ -102,9 +108,10 @@ public class MinimalDebugger {
     private void handleClassPrepare(ClassPrepareEvent event) {
         ReferenceType clazz = event.referenceType();
         System.out.println("Class loaded: " + clazz.name());
+
         // breakpoint at the start of main method
         try {
-            Method mainMethod = clazz.methodsByName("main").get(0);
+            Method mainMethod = clazz.methodsByName(MAIN_METHOD).get(0);
             BreakpointRequest mainBp =
                     eventManager.createBreakpointRequest(mainMethod.location());
             mainBp.enable();
@@ -113,9 +120,10 @@ public class MinimalDebugger {
             System.err.println(
                     "Failed to set main breakpoint: " + e.getMessage());
         }
+
         // breakpoint at the start of fibonacci method
         try {
-            Method fibMethod = clazz.methodsByName("fibonacci").get(0);
+            Method fibMethod = clazz.methodsByName(FIBONACCI_METHOD).get(0);
             BreakpointRequest fibBp =
                     eventManager.createBreakpointRequest(fibMethod.location());
             fibBp.enable();
@@ -140,30 +148,13 @@ public class MinimalDebugger {
         System.out.println("BREAKPOINT in " + methodName + "() at line " +
                 location.lineNumber());
 
-        if ("main".equals(methodName)) {
+        if (MAIN_METHOD.equals(methodName)) {
             System.out.println("=== PROGRAM STARTED ===");
             return;
         }
 
-        if ("fibonacci".equals(methodName)) {
-            Value nValue = null;
-            List<LocalVariable> variables;
-            try {
-                variables = location.method().variables();
-            } catch (AbsentInformationException e) {
-                throw new RuntimeException(e);
-            }
-            for (LocalVariable localVariable : variables) {
-                if ("n".equals(localVariable.name())) {
-                    nValue = frame.getValue(localVariable);
-                    break;
-                }
-            }
-            if (nValue != null) {
-                System.out.println("=== fibonacci(" + nValue + ") ===");
-            } else {
-                System.out.println("=== fibonacci(?) ===");
-            }
+        if (FIBONACCI_METHOD.equals(methodName)) {
+            System.out.println("=== FIBONACCI CALL ===");
             showStackFrames(thread);
         }
     }
@@ -177,38 +168,36 @@ public class MinimalDebugger {
         }
         int fibonacciCount = 0;
 
-            System.out.println("Stack depth: " + frames.size());
+        System.out.println("Stack depth: " + frames.size());
 
-            for (int i = 0; i < frames.size(); i++) {
-                StackFrame frame = frames.get(i);
-                Location location = frame.location();
-                String methodName = location.method().name();
+        for (int i = 0; i < frames.size(); i++) {
+            StackFrame frame = frames.get(i);
+            Location location = frame.location();
+            String methodName = location.method().name();
 
-                if ("fibonacci".equals(methodName)) {
-                    String nValue = "?";
-                    List<LocalVariable> variables;
-                    try {
-                        variables = location.method().variables();
-                    } catch (AbsentInformationException e) {
-                        throw new RuntimeException(e);
-                    }
-                    for (LocalVariable localVariable : variables) {
-                        if ("n".equals(localVariable.name())) {
-                            Value value = frame.getValue(localVariable);
-                            if (value != null) {
-                                nValue = value.toString();
-                            }
-                            break;
-                        }
-                    }
+            if (FIBONACCI_METHOD.equals(methodName)) {
+                String nValue = getLocalVariableValue(frame, location, PARAM_NAME);
+                System.out.println("  [" + i + "] fibonacci(n=" + nValue + ")");
+                fibonacciCount++;
+            } else {
+                System.out.println("  [" + i + "] " + methodName + "()");
+            }
+        }
+        System.out.println("Fibonacci calls in stack: " + fibonacciCount);
+    }
 
-                    System.out.println(
-                            "  [" + i + "] fibonacci(n=" + nValue + ")");
-                    fibonacciCount++;
-                } else {
-                    System.out.println("  [" + i + "] " + methodName + "()");
+    private String getLocalVariableValue(StackFrame frame, Location location, String varName) {
+        try {
+            List<LocalVariable> variables = location.method().variables();
+            for (LocalVariable localVariable : variables) {
+                if (varName.equals(localVariable.name())) {
+                    Value value = frame.getValue(localVariable);
+                    return value != null ? value.toString() : "?";
                 }
             }
-            System.out.println("Fibonacci calls in stack: " + fibonacciCount);
+        } catch (AbsentInformationException e) {
+            System.err.println("Variable info not available: " + e.getMessage());
+        }
+        return "?";
     }
 }
