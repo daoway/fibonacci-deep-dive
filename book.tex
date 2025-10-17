@@ -1060,7 +1060,7 @@ Double Fibonacci (1476): F(1476) = 130698922376339870000000000000000000... // to
 
 % Creating a table for Java data types and their limitations
 Have a looak at this table summarizing limitations of Java data types for Fibonacci calculations:
-\begin{table}[h]
+\begin{table}[H]
 \centering
 \small
 \caption{Limits of Java Data Types for Fibonacci Calculations}
@@ -1075,9 +1075,30 @@ double & 64 & $\approx 1.8 \times 10^{308}$ & Loss of precision after $\approx 1
 \bottomrule
 \end{tabularx}
 \end{table}
-TODO : fix later calculete when float and double values are inaccurate
+More than that, we can calculate differences between BigInteger result and primitive types results to see how much precision we lost.
+% Table for differences between primitive types and BigInteger
+\begin{table}[H]
+\centering
+\small
+\caption{Differences Between Primitive Type Fibonacci Numbers and BigInteger}
+\begin{tabularx}{\textwidth}{c X X X X}
+\toprule
+\textbf{Index} & \textbf{int Difference} & \textbf{long Difference} & \textbf{float Difference} & \textbf{double Difference} \\
+\midrule
+1 & 0 & 0 & 0 & 0 \\
+10 & 0 & 0 & 0 & 0 \\
+20 & 0 & 0 & 0 & 0 \\
+30 & 0 & 0 & 0 & 0 \\
+46 & 0 & 0 & 223 & 0 \\
+50 & Overflow & 0 & 1377 & 0 \\
+92 & Overflow & 0 & $2.8106 \times 10^{12}$ & 429 \\
+100 & Overflow & Overflow & $1.3046 \times 10^{14}$ & $8.4925 \times 10^{4}$ \\
+186 & Overflow & Overflow & $7.8117 \times 10^{31}$ & $3.7679 \times 10^{22}$ \\
+\bottomrule
+\end{tabularx}
+\end{table}
 
-
+So, we can conclude that primitive data types in Java have significant limitations when calculating large Fibonacci numbers, leading to overflow and precision loss. For accurate computations, especially for large indices, using \texttt{BigInteger} is essential.
 %\section{Real-World Applications}
 %\subsection{Fibonacci heaps for Dijkstra's algorithm optimization}
 %bla-bla-bla
