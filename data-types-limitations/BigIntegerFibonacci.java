@@ -3,7 +3,7 @@ import java.math.BigInteger;
 public class BigIntegerFibonacci implements FibonacciSequence<BigInteger> {
     @Override
     public BigInteger fib(int n) {
-        if (n <= 0) {
+        if (n == 0) {
             return BigInteger.ZERO;
         }
         if (n == 1) {
