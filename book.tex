@@ -932,6 +932,7 @@ When computing large Fibonacci numbers in Java, primitive data types---int, long
 \subsection{Handling Large Numbers with BigInteger}
 Unlike primitive types, \texttt{BigInteger} can represent numbers of any size, limited only by available memory, making it ideal for calculations requiring exact results, such as in cryptography or large-scale computations. It works by dynamically allocating memory to store digits and performing operations like addition and multiplication through software algorithms, rather than hardware instructions. However, this flexibility comes at the cost of slower performance and higher memory usage compared to primitives.
 Here is an example of iterative algorithm which uses \texttt{BigInteger}
+We'll use this code later to show what exactly precision loss and overflow for primitive data types. This code is good enough for calculating big numbers, so we would use it as a reference.
 \lstinputlisting[language=Java,caption={BigInteger Fibonacci}]{./data-types-limitations/BigIntegerFibonacci.java}
 Time Complexity: $T(n) = \mathcal{O}(n \cdot M)$, where $M$ is the cost of BigInteger operations. \\
 Space Complexity: $M(n) = \mathcal{O}(1)$
