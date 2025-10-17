@@ -128,6 +128,7 @@ public class LargestExactFibonacci {
                     entry.getType().getSimpleName(), entry.getIndex(), entry.getIndex(), entry);
         }
     }
+//LABEL:findLargestExactFibonacci
     private static <T extends Number> FibonacciResult<T> findLargestExactFibonacci(
             T prev, T current, AdditionStrategy<T> strategy) {
         int index = 1;
@@ -143,4 +144,6 @@ public class LargestExactFibonacci {
             }
         }
     }
+//LABEL:findLargestExactFibonacciEnd
+
 }

@@ -924,7 +924,14 @@ For large $n$, matrix exponentiation or BigDecimal-based DP are recommended. Fut
 
 \section{Limitations of Primitive Types for Large Fibonacci Numbers}
 \subsection{Showcase : from int to double}
-\lstinputlisting[language=Java, caption={Largest exact Fibonacci for int, long, float, double}]{./data-types-limitations/LargestExactFibonacci.java}
+Now we'll try to calculate some Fibonacci numbers using primitive data types in Java and see their limitations. Going to use iterative approach for simplicity.
+\lstinputlisting[
+	language=Java,
+	caption={Largest exact Fibonacci for int, long, float, double},
+	linerange={//LABEL:findLargestExactFibonacci-//LABEL:findLargestExactFibonacciEnd},
+	includerangemarker=false
+]{./data-types-limitations/LargestExactFibonacci.java}
+
 \subsection{When double goes wild}
 \subsubsection{$0.1 + 0.2 \ne 0.3$}
 In Java, when running the program
