@@ -108,29 +108,21 @@ public class MinimalDebugger {
     private void handleClassPrepare(ClassPrepareEvent event) {
         ReferenceType clazz = event.referenceType();
         System.out.println("Class loaded: " + clazz.name());
+        setBreakpoint(clazz, MAIN_METHOD);
+        setBreakpoint(clazz, FIBONACCI_METHOD);
+    }
 
-        // breakpoint at the start of main method
+    private void setBreakpoint(ReferenceType clazz, String methodName) {
         try {
-            Method mainMethod = clazz.methodsByName(MAIN_METHOD).get(0);
-            BreakpointRequest mainBp =
-                    eventManager.createBreakpointRequest(mainMethod.location());
-            mainBp.enable();
-            System.out.println("Breakpoint set at main method start");
+            Method method = clazz.methodsByName(methodName).stream().findFirst()
+                    .orElseThrow(() -> new RuntimeException(
+                            "Method " + methodName + " not found in " + clazz.name()));
+            BreakpointRequest breakpointRequest =
+                    eventManager.createBreakpointRequest(method.location());
+            breakpointRequest.enable();
         } catch (Exception e) {
             System.err.println(
-                    "Failed to set main breakpoint: " + e.getMessage());
-        }
-
-        // breakpoint at the start of fibonacci method
-        try {
-            Method fibMethod = clazz.methodsByName(FIBONACCI_METHOD).get(0);
-            BreakpointRequest fibBp =
-                    eventManager.createBreakpointRequest(fibMethod.location());
-            fibBp.enable();
-            System.out.println("Breakpoint set in fibonacci method");
-        } catch (Exception e) {
-            System.err.println(
-                    "Failed to set fibonacci breakpoint: " + e.getMessage());
+                    "Failed to set breakpoint: " + e.getMessage());
         }
     }
 
