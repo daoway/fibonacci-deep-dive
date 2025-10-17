@@ -66,17 +66,17 @@ public class LargestExactFibonacciWithDifference {
         // Compute Fibonacci results and differences for each type and index
         System.out.println("Index, int_diff, long_diff, float_diff, double_diff");
         for (int n : indices) {
-            String intDiffStr = n > intMaxIndex ? "Overflow" : computeFibonacciDifference(
+            String intDiffStr = n > intMaxIndex ? "\\text{Overflow}" : computeFibonacciDifference(
                     computeFibonacciAtIndex(n, 0, 1, (AdditionStrategy<Integer>) strategies.get(Integer.class)),
                     (AdditionStrategy<BigInteger>) strategies.get(BigInteger.class)).toString();
-            String longDiffStr = n > longMaxIndex ? "Overflow" : computeFibonacciDifference(
+            String longDiffStr = n > longMaxIndex ? "\\text{Overflow}" : computeFibonacciDifference(
                     computeFibonacciAtIndex(n, 0L, 1L, (AdditionStrategy<Long>) strategies.get(Long.class)),
                     (AdditionStrategy<BigInteger>) strategies.get(BigInteger.class)).toString();
-            String floatDiffStr = n > floatMaxIndex ? "Infinity" : formatDifference(
+            String floatDiffStr = n > floatMaxIndex ? "\\infty" : formatDifference(
                     computeFibonacciDifference(
                             computeFibonacciAtIndex(n, 0.0F, 1.0F, (AdditionStrategy<Float>) strategies.get(Float.class)),
                             (AdditionStrategy<BigInteger>) strategies.get(BigInteger.class)), n);
-            String doubleDiffStr = n > doubleMaxIndex ? "Precision Loss" : formatDifference(
+            String doubleDiffStr = n > doubleMaxIndex ? "\\text{Precision Loss}" : formatDifference(
                     computeFibonacciDifference(
                             computeFibonacciAtIndex(n, 0.0D, 1.0D, (AdditionStrategy<Double>) strategies.get(Double.class)),
                             (AdditionStrategy<BigInteger>) strategies.get(BigInteger.class)), n);
@@ -86,12 +86,17 @@ public class LargestExactFibonacciWithDifference {
         }
     }
 
-    // Format difference in scientific notation for n >= 100
+    // Format difference in LaTeX-friendly scientific notation for n >= 100
     private static String formatDifference(BigInteger value, int index) {
         if (value.equals(BigInteger.ZERO)) return "0";
         if (index >= 100) {
             BigDecimal decimal = new BigDecimal(value);
-            return String.format("%.4E", decimal); // Scientific notation with 4 decimal places
+            String sciNotation = String.format("%.4E", decimal);
+            // Convert to LaTeX format: a.bcde \times 10^{n}
+            String[] parts = sciNotation.split("E");
+            String mantissa = parts[0];
+            String exponent = parts[1].startsWith("+") ? parts[1].substring(1) : parts[1];
+            return String.format("%s \\times 10^{%s}", mantissa, exponent);
         }
         return value.toString();
     }
