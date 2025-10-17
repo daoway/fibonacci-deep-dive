@@ -926,6 +926,16 @@ We explored Fibonacci computation methods, from naive recursion ($\mathcal{O}(2^
 For large $n$, matrix exponentiation or BigDecimal-based DP are recommended.
 
 \section{Limitations of Primitive Types for Large Fibonacci Numbers}
+\subsection{Introduction}
+When computing large Fibonacci numbers in Java, primitive data types---int, long, float, and double---encounter significant limitations due to their fixed memory allocation and design. These constraints manifest as issues with range, precision, and overflow behavior, which become critical as Fibonacci numbers grow exponentially. Specifically, \texttt{int} and \texttt{long} face overflow when numbers exceed their maximum values, while \texttt{float} and \texttt{double} suffer from loss of precision for large integers, resulting in inaccurate results. Understanding these limitations is crucial for selecting appropriate data types or alternative approaches, such as \texttt{BigInteger}, to handle large Fibonacci numbers effectively.
+
+\subsection{Handling Large Numbers with BigInteger}
+Unlike primitive types, \texttt{BigInteger} can represent numbers of any size, limited only by available memory, making it ideal for calculations requiring exact results, such as in cryptography or large-scale computations. It works by dynamically allocating memory to store digits and performing operations like addition and multiplication through software algorithms, rather than hardware instructions. However, this flexibility comes at the cost of slower performance and higher memory usage compared to primitives.
+Here is an example of iterative algorithm which uses \texttt{BigInteger}
+\lstinputlisting[language=Java,caption={BigInteger Fibonacci}]{./data-types-limitations/BigIntegerFibonacci.java}
+Time Complexity: $T(n) = \mathcal{O}(n \cdot M)$, where $M$ is the cost of BigInteger operations. \\
+Space Complexity: $M(n) = \mathcal{O}(1)$
+
 \subsection{When double goes wild}
 \subsubsection{$0.1 + 0.2 \ne 0.3$}
 In Java, when running the program
@@ -1066,11 +1076,6 @@ double & 64 & $\approx 1.8 \times 10^{308}$ & Loss of precision after $\approx 1
 \end{table}
 TODO : fix later calculete when float and double values are inaccurate
 
-\subsection{Handling Large Numbers with BigInteger}
-The \texttt{int} and \texttt{long} types in Java overflow for large Fibonacci numbers (e.g., $F_{93}$ exceeds \texttt{long}). We use \texttt{BigInteger} for arbitrary-precision arithmetic to address this limitation.
-\lstinputlisting[language=Java,caption={BigInteger Fibonacci}]{./data-types-limitations/BigIntegerFibonacci.java}
-Time Complexity: $T(n) = \mathcal{O}(n \cdot M)$, where $M$ is the cost of BigDecimal operations. \\
-Space Complexity: $M(n) = \mathcal{O}(1)$
 
 %\section{Real-World Applications}
 %\subsection{Fibonacci heaps for Dijkstra's algorithm optimization}
