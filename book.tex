@@ -720,7 +720,7 @@ The total number of recursive calls is exponential, which might suggest exponent
 \subsection{JVM Debugger view}
 To show how recursion works in JVM, we can use Java Debug Interface (JDI) to create a simple debugger. Subject of our interest is call stack, so we will set breakpoint in Fibonacci method and step into it.
 Here it is:
-\lstinputlisting[language=Java, caption={Minimal Debugger},firstline=31]{./fibonacci-debugger/MinimalDebugger.java}
+\lstinputlisting[language=Java, caption={Minimal Debugger}, linerange={public\ class\ MinimalDebugger-}]{./fibonacci-debugger/MinimalDebugger.java}
 We are not reuse previous Fibonacci code, but create a new one for debugger target :
 \lstinputlisting[language=Java, caption={Debugger Target}, nolol]{./fibonacci-debugger/FibonacciTarget.java}
 It has main method, so we can set breakpoint there and step into Fibonacci method.
