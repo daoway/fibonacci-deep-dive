@@ -75,6 +75,9 @@
 \newcommand{\sectionbreak}{\clearpage}
 
 \usepackage{float}
+\usepackage{tabularx}
+
+\usepackage{booktabs}
 
 \begin{document}
 \bibliographystyle{plain}
@@ -968,6 +971,25 @@ Long Fibonacci (92): F(92) = 7540113804746346429
 Float Fibonacci (186): F(186) = 332825031969915840000000000000000000000
 Double Fibonacci (1476): F(1476) = 130698922376339870000000000000000000... // ton of zeros
 \end{lstlisting}
+
+% Creating a table for Java data types and their limitations
+Have a looak at this table summarizing limitations of Java data types for Fibonacci calculations:
+\begin{table}[h]
+\centering
+\small
+\caption{Limits of Java Data Types for Fibonacci Calculations}
+\begin{tabularx}{\textwidth}{l c X X}
+\toprule
+\textbf{Data Type} & \textbf{Size (bits)} & \textbf{Maximum Value} & \textbf{Limitations for Large Numbers} \\
+\midrule
+int & 32 & $2,147,483,647$ ($\approx 2.1 \times 10^9$) & Overflow at F(47) ($\approx 2.97 \times 10^9$) \\
+long & 64 & $9,223,372,036,854,775,807$ ($\approx 9.2 \times 10^{18}$) & Overflow at F(93) ($\approx 1.22 \times 10^{19}$) \\
+float & 32 & $\approx 3.4 \times 10^{38}$ & Loss of precision after $\approx 10^7$; inaccurate for F(186) \\
+double & 64 & $\approx 1.8 \times 10^{308}$ & Loss of precision after $\approx 10^{15}$; inaccurate for F(1476) \\
+\bottomrule
+\end{tabularx}
+\end{table}
+TODO : fix later calculete when float and double values are inaccurate
 \subsection{When double goes wild}
 \subsubsection{$0.1 + 0.2 \ne 0.3$}
 In Java, when running the program
