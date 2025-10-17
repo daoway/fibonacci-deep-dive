@@ -16,14 +16,14 @@ class IntegerAdditionStrategy implements AdditionStrategy<Integer> {
     }
 }
 
-// Strategy for Long
+//LABEL:LongAdditionStrategy
 class LongAdditionStrategy implements AdditionStrategy<Long> {
     @Override
     public Long add(Long a, Long b) throws ArithmeticException {
         return Math.addExact(a, b);
     }
 }
-
+//LABEL:LongAdditionStrategyEnd
 
 // Strategy for Double
 // Note: Unlike int/long, Java does not provide Math.addExact for double/float.
@@ -52,6 +52,7 @@ class FloatAdditionStrategy implements AdditionStrategy<Float> {
     }
 }
 
+//LABEL:DoubleAdditionStrategy
 class DoubleAdditionStrategy implements AdditionStrategy<Double> {
     @Override
     public Double add(Double a, Double b) throws ArithmeticException {
@@ -65,7 +66,9 @@ class DoubleAdditionStrategy implements AdditionStrategy<Double> {
         return result;
     }
 }
+//LABEL:DoubleAdditionStrategyEnd
 
+//LABEL:FibonacciResult
 class FibonacciResult<T extends Number> {
     private final int index;
     private final T value;
@@ -103,8 +106,10 @@ class FibonacciResult<T extends Number> {
         };
     }
 }
+//LABEL:FibonacciResultEnd
 
 @SuppressWarnings("all")
+//LABEL:LargestExactFibonacci
 public class LargestExactFibonacci {
     public static void main(String[] args) {
         Map<Class<? extends Number>, AdditionStrategy<?>> strategies = new HashMap<>();
@@ -114,20 +119,22 @@ public class LargestExactFibonacci {
         strategies.put(Double.class, new DoubleAdditionStrategy());
 
 
-        FibonacciResult<Integer> resultInt = findLargestExactFibonacci(0, 1,
+        FibonacciResult<Integer> intResult = findLargestExactFibonacci(0, 1,
                 (AdditionStrategy<Integer>) strategies.get(Integer.class));
-        FibonacciResult<Long> resultLong = findLargestExactFibonacci(0L, 1L,
+        FibonacciResult<Long> longResult = findLargestExactFibonacci(0L, 1L,
                 (AdditionStrategy<Long>) strategies.get(Long.class));
-        FibonacciResult<Float> resultFloat = findLargestExactFibonacci(0.0F, 1.0F,
+        FibonacciResult<Float> floatResult = findLargestExactFibonacci(0.0F, 1.0F,
                 (AdditionStrategy<Float>) strategies.get(Float.class));
-        FibonacciResult<Double> resultDouble = findLargestExactFibonacci(0.0D, 1.0D,
+        FibonacciResult<Double> doubleResult = findLargestExactFibonacci(0.0D, 1.0D,
                 (AdditionStrategy<Double>) strategies.get(Double.class));
 
-        for (FibonacciResult<?> entry : List.of(resultInt, resultLong, resultFloat, resultDouble)) {
+        for (FibonacciResult<?> entry : List.of(intResult, longResult, floatResult, doubleResult)) {
             System.out.printf("%s Fibonacci (%s): F(%s) = %s%n",
                     entry.getType().getSimpleName(), entry.getIndex(), entry.getIndex(), entry);
         }
     }
+//LABEL:LargestExactFibonacciEnd
+
 //LABEL:findLargestExactFibonacci
     private static <T extends Number> FibonacciResult<T> findLargestExactFibonacci(
             T prev, T current, AdditionStrategy<T> strategy) {

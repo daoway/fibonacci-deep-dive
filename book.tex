@@ -920,18 +920,54 @@ We explored Fibonacci computation methods, from naive recursion ($\mathcal{O}(2^
 	\caption{Complexity Comparison of Fibonacci Methods}
 \end{table}
 
-For large $n$, matrix exponentiation or BigDecimal-based DP are recommended. Future exploration could include fast doubling algorithms or parallel computation.
+For large $n$, matrix exponentiation or BigDecimal-based DP are recommended.
 
 \section{Limitations of Primitive Types for Large Fibonacci Numbers}
 \subsection{Showcase : from int to double}
 Now we'll try to calculate some Fibonacci numbers using primitive data types in Java and see their limitations. Going to use iterative approach for simplicity.
 \lstinputlisting[
 	language=Java,
-	caption={Largest exact Fibonacci for int, long, float, double},
 	linerange={//LABEL:findLargestExactFibonacci-//LABEL:findLargestExactFibonacciEnd},
-	includerangemarker=false
+	includerangemarker=false,
+	nolol
 ]{./data-types-limitations/LargestExactFibonacci.java}
-
+As you can see we are trying to get largest Fibonacci number that fits in given data type. We have different strategies for different types.
+When we add numbers, we have to check for overflow. For Integer we have special method \texttt{Math.addExact(a, b)} that throws \texttt{ArithmeticException} on overflow.
+\lstinputlisting[
+	language=Java,
+	linerange={//LABEL:LongAdditionStrategy-//LABEL:LongAdditionStrategyEnd},
+	includerangemarker=false,
+	nolol
+]{./data-types-limitations/LargestExactFibonacci.java}
+For double and float we have different situation - it becomes Infinity or NaN at some point, because of precision loss. We'll perfom this check and rethrow an exception when it happens.
+\lstinputlisting[
+	language=Java,
+	linerange={//LABEL:DoubleAdditionStrategy-//LABEL:DoubleAdditionStrategyEnd},
+	includerangemarker=false,
+	nolol
+]{./data-types-limitations/LargestExactFibonacci.java}
+And putting it all together :
+\lstinputlisting[
+	language=Java,
+	linerange={//LABEL:LargestExactFibonacci-//LABEL:LargestExactFibonacciEnd},
+	includerangemarker=false,
+	nolol
+]{./data-types-limitations/LargestExactFibonacci.java}
+Result of calculation is presented below :
+\lstinputlisting[
+	language=Java,
+	linerange={//LABEL:FibonacciResult-//LABEL:FibonacciResultEnd},
+	includerangemarker=false,
+	nolol
+]{./data-types-limitations/LargestExactFibonacci.java}
+Interesting part here is how we output floating point numbers. We use \texttt{BigDecimal} to represent them exactly and print without scientific notation.
+Outpput is a bit surprising. For Integer and Long everything is fine, but for Float and Double we have some unexpected results.
+\begin{lstlisting}[language=bash]
+Integer Fibonacci (46): F(46) = 1836311903
+Long Fibonacci (92): F(92) = 7540113804746346429
+Float Fibonacci (186): F(186) = 332825031969915840000000000000000000000
+Double Fibonacci (1476): F(1476) = 130698922376339870000000000000000000... // ton of zeros
+\end{lstlisting}
 \subsection{When double goes wild}
 \subsubsection{$0.1 + 0.2 \ne 0.3$}
 In Java, when running the program
