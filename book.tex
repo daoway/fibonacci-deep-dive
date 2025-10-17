@@ -926,6 +926,81 @@ We explored Fibonacci computation methods, from naive recursion ($\mathcal{O}(2^
 For large $n$, matrix exponentiation or BigDecimal-based DP are recommended.
 
 \section{Limitations of Primitive Types for Large Fibonacci Numbers}
+\subsection{When double goes wild}
+\subsubsection{$0.1 + 0.2 \ne 0.3$}
+In Java, when running the program
+\lstinputlisting[language=Java,caption={Unexpected sum jn Java}, nolol]{./data-types-limitations/DoubleExample.java}
+the output is
+\begin{verbatim}
+	0.30000000000000004
+\end{verbatim}
+instead of exactly \texttt{0.3}. \\
+
+If you think Java is broken, try it in JavaScript or Python\\
+JavaScript:
+\lstinputlisting[language=JavaScript,caption={Unexpected sum in JavaScript}, nolol]{./data-types-limitations/DoubleExample.js}
+Python:
+\lstinputlisting[language=Python,caption={Unexpected sum in Python}, nolol]{./data-types-limitations/DoubleExample.py}
+Output :
+\begin{lstlisting}[language=bash]
+	>java DoubleExample
+	0.30000000000000004
+	
+	>node DoubleExample.js
+	0.30000000000000004
+	
+	>python a.py
+	0.30000000000000004	
+\end{lstlisting}
+
+This behavior is not a bug, but a direct consequence of the \emph{IEEE 754 double-precision floating-point format}.
+
+\subsubsection{IEEE 754 Representation}
+A Java \texttt{double} uses 64 bits:
+\begin{itemize}
+	\item 1 bit for the \emph{sign},
+	\item 11 bits for the \emph{exponent},
+	\item 52 bits for the \emph{mantissa} (fraction).
+\end{itemize}
+
+The value is computed as
+\[
+(-1)^{\text{sign}} \times 1.\text{mantissa} \times 2^{(\text{exponent} - 1023)}.
+\]
+
+\subsubsection{Calculate as machines}
+The decimal fraction $0.1 = \tfrac{1}{10}$ has no finite binary expansion.
+In base 2 it becomes
+\[
+0.1_{10} = 0.00011001100110011\ldots_2
+\]
+with repeating pattern \texttt{0011}. Since only 52 bits are available for
+the mantissa, this value is stored approximately as
+\[
+0.10000000000000000555\ldots
+\]
+
+Similarly,
+\[
+0.2 \approx 0.2000000000000000111, \quad
+0.3 \approx 0.2999999999999999889.
+\]
+Therefore,
+\[
+0.1 + 0.2 \approx 0.3000000000000000444,
+\]
+which is printed as \texttt{0.30000000000000004}.
+\\
+The decimal system can exactly represent fractions like $1/10$ or $1/5$,
+but binary cannot. Binary floating-point can exactly represent only fractions
+whose denominators are powers of two (e.g., $1/2$, $1/4$, $1/8$). Numbers like
+$1/10$ or $1/5$ become infinite binary fractions, which must be rounded.
+
+\subsubsection{Conclusion}
+The result \texttt{0.30000000000000004} is not an error, but the inevitable
+effect of representing decimal fractions in binary with limited precision.
+Understanding IEEE 754 is essential for writing correct numerical programs.
+
 \subsection{Showcase : from int to double}
 Now we'll try to calculate some Fibonacci numbers using primitive data types in Java and see their limitations. Going to use iterative approach for simplicity.
 \lstinputlisting[
@@ -990,80 +1065,6 @@ double & 64 & $\approx 1.8 \times 10^{308}$ & Loss of precision after $\approx 1
 \end{tabularx}
 \end{table}
 TODO : fix later calculete when float and double values are inaccurate
-\subsection{When double goes wild}
-\subsubsection{$0.1 + 0.2 \ne 0.3$}
-In Java, when running the program
-\lstinputlisting[language=Java,caption={Unexpected sum jn Java}, nolol]{./data-types-limitations/DoubleExample.java}
-the output is
-\begin{verbatim}
-	0.30000000000000004
-\end{verbatim}
-instead of exactly \texttt{0.3}. \\
-
-If you think Java is broken, try it in JavaScript or Python\\
-JavaScript:
-\lstinputlisting[language=JavaScript,caption={Unexpected sum in JavaScript}, nolol]{./data-types-limitations/DoubleExample.js}
-Python:
-\lstinputlisting[language=Python,caption={Unexpected sum in Python}, nolol]{./data-types-limitations/DoubleExample.py}
-Output :
-\begin{lstlisting}[language=bash]
->java DoubleExample
-0.30000000000000004
-
->node DoubleExample.js
-0.30000000000000004
-
->python a.py
-0.30000000000000004	
-\end{lstlisting}
-
-This behavior is not a bug, but a direct consequence of the \emph{IEEE 754 double-precision floating-point format}.
-
-\subsubsection{IEEE 754 Representation}
-A Java \texttt{double} uses 64 bits:
-\begin{itemize}
-	\item 1 bit for the \emph{sign},
-	\item 11 bits for the \emph{exponent},
-	\item 52 bits for the \emph{mantissa} (fraction).
-\end{itemize}
-
-The value is computed as
-\[
-(-1)^{\text{sign}} \times 1.\text{mantissa} \times 2^{(\text{exponent} - 1023)}.
-\]
-
-\subsubsection{Calculate as machines}
-The decimal fraction $0.1 = \tfrac{1}{10}$ has no finite binary expansion.
-In base 2 it becomes
-\[
-0.1_{10} = 0.00011001100110011\ldots_2
-\]
-with repeating pattern \texttt{0011}. Since only 52 bits are available for
-the mantissa, this value is stored approximately as
-\[
-0.10000000000000000555\ldots
-\]
-
-Similarly,
-\[
-0.2 \approx 0.2000000000000000111, \quad
-0.3 \approx 0.2999999999999999889.
-\]
-Therefore,
-\[
-0.1 + 0.2 \approx 0.3000000000000000444,
-\]
-which is printed as \texttt{0.30000000000000004}.
-\\
-The decimal system can exactly represent fractions like $1/10$ or $1/5$,
-but binary cannot. Binary floating-point can exactly represent only fractions
-whose denominators are powers of two (e.g., $1/2$, $1/4$, $1/8$). Numbers like
-$1/10$ or $1/5$ become infinite binary fractions, which must be rounded.
-
-\subsubsection{Conclusion}
-The result \texttt{0.30000000000000004} is not an error, but the inevitable
-effect of representing decimal fractions in binary with limited precision.
-Understanding IEEE 754 is essential for writing correct numerical programs.
 
 \subsection{Handling Large Numbers with BigInteger}
 The \texttt{int} and \texttt{long} types in Java overflow for large Fibonacci numbers (e.g., $F_{93}$ exceeds \texttt{long}). We use \texttt{BigInteger} for arbitrary-precision arithmetic to address this limitation.
