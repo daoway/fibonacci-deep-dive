@@ -946,6 +946,72 @@ Conceptually, the computation becomes a simple linear flow:
 where each new term is built from the two preceding ones.
 %% Time Complexity: $T(n) = \mathcal{O}(n)$ Space Complexity: $M(n) = \mathcal{O}(1)$ (optimized version)
 
+\subsection{Dynamic Programming: Top-Down vs Bottom-Up}
+
+Dynamic Programming (DP) is a general strategy for solving problems that can be decomposed into
+\textbf{overlapping subproblems} and exhibit \textbf{optimal substructure}.
+This means that:
+\begin{itemize}
+	\item the same subproblems occur multiple times during computation, and
+	\item the optimal solution to the whole problem can be built from optimal solutions of its parts.
+\end{itemize}
+
+The Fibonacci sequence is a canonical example of such a problem.
+There are two main ways to implement dynamic programming algorithms:
+\textbf{top-down} (with memoization) and \textbf{bottom-up} (with iteration).
+\paragraph{Top-Down (Memoization)}
+\begin{itemize}
+	\item Start with the original problem (e.g., $F(n)$) and solve it recursively.
+	\item Each recursive call stores its result in a table (a \texttt{Map} or an array).
+	\item If a value has already been computed, it is reused instead of recomputed.
+\end{itemize}
+This approach mirrors the recursive structure of the mathematical definition and is often easier to write and reason about.
+However, it relies on recursion and may cause stack overflow for very deep recursion depths.
+
+\paragraph{Bottom-Up (Tabulation)}
+\begin{itemize}
+	\item Identify the smallest subproblems (the \emph{base cases}).
+	\item Build a table iteratively, filling it from smaller indices to larger ones.
+	\item Each new value is computed from already known previous values.
+\end{itemize}
+This approach avoids recursion completely.
+It usually requires more careful setup but is more memory- and time-efficient.
+
+\begin{center}
+	\begin{tabular}{lll}
+		\toprule
+		& \textbf{Top-Down (Memoization)} & \textbf{Bottom-Up (Tabulation)} \\
+		\midrule
+		Computation order & On-demand (recursive) & Sequential (iterative) \\
+		Storage structure & HashMap / array & Array / table \\
+		Call mechanism & Recursion + cache & Loop \\
+		Execution flow & From problem to subproblems & From subproblems to problem \\
+		Memory use & $O(n)$ & $O(n)$ or less (can be $O(1)$) \\
+		Best for & Conceptual clarity & Performance \\
+		\bottomrule
+	\end{tabular}
+\end{center}
+
+Both strategies embody the same principle:
+\begin{quote}
+	\emph{Do not recompute the same subproblem twice.}
+\end{quote}
+
+Memoization can be seen as a \textbf{lazy} version of dynamic programming
+(solve subproblems only when needed),
+while bottom-up tabulation is an \textbf{eager} version
+(precompute all subproblems in advance).
+
+In real-world applications, the choice between top-down and bottom-up depends on:
+\begin{itemize}
+	\item \textbf{Problem structure:} recursive vs iterative dependencies.
+	\item \textbf{Available memory and stack depth.}
+	\item \textbf{Ease of implementation:} top-down code is often more natural for tree-like problems,
+	while bottom-up suits array-like or sequential problems.
+\end{itemize}
+It's all for now about dynamic programming. Let's move to another interesting approach. We'll do some math and improve our Fibonacci implementation even more.
+From $\mathcal{O}(n)$ to $\mathcal{O}(\log n)$.
+
 \subsection{Linear algebra and Fibonacci}
 \subsubsection{Matrices and Transformations}
 We begin with the general concepts of matrices as linear transformations and matrix multiplication, then apply these ideas to the Fibonacci sequence, deriving its matrix form and geometric meaning.
