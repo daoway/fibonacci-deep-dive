@@ -879,9 +879,72 @@ Both methods rely on the same principle:
 The bottom-up form, however, is usually more memory-efficient
 and avoids the overhead of recursive function calls.
 
+
+\subsection{Iterative Fibonacci and Space Optimization}
+
+The bottom-up dynamic programming approach eliminates recursion,
+but still stores all intermediate values in an array of size $O(n)$.
+However, when computing the Fibonacci sequence, each new term depends only on the previous two values.
+This observation allows us to remove the array entirely and keep only two variables that ``slide'' through the sequence.
+
 \lstinputlisting[language=Java,caption={Space-Optimized DP Fibonacci}]{./optimizing-recursion/IterativeFibonacci.java}
-Time Complexity: $T(n) = \mathcal{O}(n)$ \\
-Space Complexity: $M(n) = \mathcal{O}(1)$ (optimized version)
+
+Instead of storing the entire DP table, we can maintain only:
+\[
+	\texttt{prev} = F_{i-2}, \qquad \texttt{curr} = F_{i-1}
+\]
+and compute
+\[
+	\texttt{next} = \texttt{prev} + \texttt{curr}
+\]
+at each step, shifting the variables forward:
+\[
+	\texttt{prev} \leftarrow \texttt{curr}, \qquad
+	\texttt{curr} \leftarrow \texttt{next}
+\]
+
+This simple loop reproduces the same results as the bottom-up method,
+but with constant memory and no recursion at all.
+
+Time and Space Complexity.
+
+The number of loop iterations is linear in $n$,
+so the time complexity remains:
+\[
+	T(n) = O(n)
+\]
+However, the space complexity improves dramatically:
+\[
+	S(n) = O(1)
+\]
+since only three variables (\texttt{prev}, \texttt{curr}, \texttt{next}) are needed, regardless of $n$.
+
+\begin{center}
+	\begin{tabular}{lccc}
+		\toprule
+		\textbf{Approach} & \textbf{Recursion} & \textbf{Extra Memory} & \textbf{Asymptotic Time} \\
+		\midrule
+		Naive recursion & Yes & None & $O(\varphi^n)$ \\
+		Memoization (top-down DP) & Yes & $O(n)$ & $O(n)$ \\
+		Bottom-up DP (array) & No & $O(n)$ & $O(n)$ \\
+		Iterative (optimized DP) & No & $O(1)$ & $O(n)$ \\
+		\bottomrule
+	\end{tabular}
+\end{center}
+
+This version represents the final stage of optimization:
+\begin{itemize}
+	\item The recursion tree disappears completely.
+	\item Memory use shrinks to a few constant variables.
+	\item Each Fibonacci number is computed in one pass.
+\end{itemize}
+
+Conceptually, the computation becomes a simple linear flow:
+\[
+	F_0 \rightarrow F_1 \rightarrow F_2 \rightarrow \cdots \rightarrow F_n
+\]
+where each new term is built from the two preceding ones.
+%% Time Complexity: $T(n) = \mathcal{O}(n)$ Space Complexity: $M(n) = \mathcal{O}(1)$ (optimized version)
 
 \subsection{Linear algebra and Fibonacci}
 \subsubsection{Matrices and Transformations}
