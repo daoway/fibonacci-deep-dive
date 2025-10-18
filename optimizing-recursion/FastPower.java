@@ -13,6 +13,5 @@ public class FastPower {
 
     public static void main(String[] args) {
         System.out.println(pow(3, 13));  // 1,594,323
-        //System.out.println(pow(3, 0));  // 1
     }
 }
