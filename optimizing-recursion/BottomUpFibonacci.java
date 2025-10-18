@@ -1,4 +1,4 @@
-public class ArrayDP implements FibonacciSequence<Long> {
+public class BottomUpFibonacci implements FibonacciSequence<Long> {
     @Override
     public Long fib(int n) {
         if (n <= 0) {

@@ -837,9 +837,47 @@ The memory usage also grows linearly, since one value is stored for each index:
 	S_{\text{memoized}}(n) = O(n)
 \]
 
-\subsection{Dynamic Programming}
-Dynamic programming (DP) avoids recursion entirely. We present two variants: array-based and space-optimized.
-\lstinputlisting[language=Java,caption={Array-Based DP Fibonacci}]{./optimizing-recursion/ArrayDP.java}
+\subsection{Bottom-Up Dynamic Programming Approach}
+After introducing memoization as a \emph{top-down} optimization,
+we can take the same idea one step further by removing recursion entirely.
+Instead of computing subproblems on demand, we build the table of results
+\emph{iteratively} from the smallest cases upward.
+This approach is known as \textbf{bottom-up dynamic programming}.
+
+\lstinputlisting[language=Java,caption={Botton-up Fibonacci}]{./optimizing-recursion/BottomUpFibonacci.java}
+
+This version eliminates recursion by directly constructing an array
+where each entry \texttt{fib[i]} stores the $i$-th Fibonacci number.
+The first two values are initialized to $F_0 = 0$ and $F_1 = 1$,
+and then a single loop fills the rest of the array using the recurrence:
+\[
+	F_i = F_{i-1} + F_{i-2} \qquad \text{for } i \ge 2
+\]
+Since every previous value is already known, there is no need to perform any recursive calls.
+
+Each Fibonacci number from $2$ to $n$ is computed exactly once,
+so the total running time is linear:
+\[
+	T(n) = O(n)
+\]
+The algorithm also stores all intermediate results in an array of size $n + 1$,
+resulting in a linear space complexity:
+\[
+	S(n) = O(n)
+\]
+Compared to memoization, this version avoids the recursive call stack and uses
+a fixed amount of iterative control.
+\\
+Conceptual comparison :
+\begin{itemize}
+	\item \textbf{Memoization (top-down):} recursion + caching previously computed results.
+	\item \textbf{Dynamic programming (bottom-up):} build the same table iteratively.
+\end{itemize}
+
+Both methods rely on the same principle:
+\emph{each subproblem is solved only once}.
+The bottom-up form, however, is usually more memory-efficient
+and avoids the overhead of recursive function calls.
 
 \lstinputlisting[language=Java,caption={Space-Optimized DP Fibonacci}]{./optimizing-recursion/IterativeFibonacci.java}
 Time Complexity: $T(n) = \mathcal{O}(n)$ \\
