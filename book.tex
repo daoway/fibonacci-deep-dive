@@ -764,13 +764,78 @@ The recursive Fibonacci algorithm has:
 
 \section{Optimizing Recursion}
 \subsection{Memoization}
-Memoization stores computed values to avoid redundant calculations.
-
 \lstinputlisting[language=Java,caption={Memoized Fibonacci}]{./optimizing-recursion/Memoization.java}
+When computing recursive functions such as the Fibonacci sequence, a large amount of redundant work is performed.
+In a naive recursive implementation, many subproblems are solved multiple times.
+For example, both calls to \texttt{fib(4)} and \texttt{fib(3)} appear several times in the recursion tree of \texttt{fib(5)}.
+Recursion, by itself, does not remember previously computed results.
 
-Time Complexity: $T(n) = \mathcal{O}(n)$ \\
-Space Complexity: $M(n) = \mathcal{O}(n)$
+\textbf{Memoization} is a technique that introduces \emph{memory} into recursion.
+The key idea is simple:
 
+\begin{quote}
+	If a function has already computed the value for some argument $n$,
+	it should store that result and return it directly next time instead of recomputing it.
+\end{quote}
+
+This means that each distinct subproblem is solved only once,
+and subsequent recursive calls simply look up the answer in a table (often called a \emph{memo}).
+
+\begin{enumerate}
+	\item The first time a function such as \texttt{fib(n)} is called, it performs the usual recursive computation.
+	\item After computing a value, it is stored in a table (for example, a \texttt{HashMap} in Java) using $n$ as the key.
+	\item If the same function is later called with the same argument, it first checks whether that key already exists in the table:
+	\begin{itemize}
+		\item If yes --- return the stored value immediately.
+		\item If no --- compute it recursively and then store it.
+	\end{itemize}
+\end{enumerate}
+
+This approach converts an exponential recursion (with repeated subtrees) into a linear process where each subproblem is evaluated only once.
+
+A \texttt{HashMap} provides average constant-time ($O(1)$) access to stored values.
+Each entry in the map corresponds to one subproblem:
+\[
+	\text{key} = n, \qquad \text{value} = F(n)
+\]
+Checking whether a result is already known and retrieving it from memory thus takes negligible time compared to performing another recursive expansion.
+
+Recursion can be imagined as a tree of function calls that grows exponentially.
+Memoization ``cuts off'' branches that lead to already known results,
+turning the tree into a straight line of unique subproblems.
+
+Memoization is not limited to Fibonacci numbers.
+It applies to any recursive problem that:
+\begin{itemize}
+	\item exhibits \textbf{overlapping subproblems}, and
+	\item depends only on its input arguments (i.e., is a \emph{pure function}).
+\end{itemize}
+
+In fact, this idea forms the theoretical foundation of \textbf{dynamic programming}:
+\emph{store intermediate results to avoid recomputation}.
+
+%% So, time complexity: $T(n) = \mathcal{O}(n)$ and space complexity: $M(n) = \mathcal{O}(n)$.
+
+In the naive recursive Fibonacci function, the number of function calls grows approximately as $\varphi^n$.
+This happens because each call branches into two further calls, leading to an exponential explosion of overlapping subproblems.
+
+With memoization, however, every value of \texttt{fib(k)} for $k \le n$ is computed only once and then stored.
+As a result, the total number of computations becomes linear in $n$:
+
+\[
+	T_{\text{naive}}(n) = O(\varphi^n)
+	\qquad \Longrightarrow \qquad
+	T_{\text{memoized}}(n) = O(n)
+\]
+
+Each access to the memoization table (implemented as a \texttt{HashMap}) takes constant expected time, $O(1)$,
+so the overall asymptotic cost is dominated by the number of unique subproblems.
+
+The memory usage also grows linearly, since one value is stored for each index:
+
+\[
+	S_{\text{memoized}}(n) = O(n)
+\]
 
 \subsection{Dynamic Programming}
 Dynamic programming (DP) avoids recursion entirely. We present two variants: array-based and space-optimized.
