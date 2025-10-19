@@ -12,6 +12,8 @@
 \usepackage{booktabs}
 \usepackage{array}
 
+\usepackage{tikz}
+
 % Defining code listing style for Java
 \lstset{
 	language=Java,
@@ -29,7 +31,9 @@
 
 % Setting font package last
 \usepackage{noto}
-
+\newcommand*\circled[1]{\tikz[baseline=(char.base)]{
+		\node[shape=circle,draw,inner sep=1pt] (char) {#1};}}
+	
 \begin{document}
 	
 	\title{Fast Exponentiation}
@@ -48,10 +52,10 @@
 	The key insight is that any positive integer can be expressed as a sum of powers of 2. Consider computing $3^{13}$. We first convert the exponent 13 to binary using successive division by 2:
 	
     \begin{align*}
-		\frac{13}{2} &= 6 + 1 \\
-		\frac{6}{2} &= 3 + 0 \\
-		\frac{3}{2} &= 1 + 1 \\
-		\frac{1}{2} &= 0 + 1 \\
+		\frac{13}{2} & \rightarrow 2 \cdot \underline{6} + \circled{1} \\
+		\frac{6}{2} & \rightarrow 2 \cdot \underline{3} + \circled{0} \\
+		\frac{3}{2} & \rightarrow 2 \cdot \underline{1} + \circled{1} \\
+		\frac{1}{2} & \rightarrow 2 \cdot 0 + \circled{1} \\
 	\end{align*}
 	
 	Reading the remainders from bottom to top yields $13 = 1101_2$. In expanded form:
