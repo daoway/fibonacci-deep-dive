@@ -32,7 +32,7 @@
 
 \begin{document}
 	
-	\title{Fast Exponentiation: Introduction to Matrix Exponentiation}
+	\title{Fast Exponentiation}
 	\author{}
 	\date{}
 	\maketitle
@@ -70,7 +70,7 @@
 	
 	Instead of computing 12 multiplications ($3 \times 3 \times \cdots \times 3$), we need only compute $3^8$, $3^4$, and $3^1$, then multiply these results together.
 	
-	\section{The Algorithm}
+	\section{Binary Exponentiation Algorithm}
 	The algorithm processes the binary representation of the exponent from right to left (least significant bit to most significant bit), maintaining two values:
 	\begin{itemize}[itemsep=2pt]
 		\item \textbf{result}: Accumulates the final answer by multiplying in powers of the base corresponding to 1-bits
