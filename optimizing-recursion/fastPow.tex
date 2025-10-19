@@ -220,53 +220,6 @@
 		\caption{Step-by-step execution of the square-and-multiply algorithm for $3^{13}$}
 	\end{table}
 	
-	\subsection{Detailed Trace}
-	
-	\begin{enumerate}[leftmargin=*]
-		\item \textbf{Initialization}: 
-		\[\texttt{result} = 1, \quad \texttt{base} = 3, \quad \texttt{exponent} = 13\]
-		
-		\item \textbf{Step 1} (bit $b_0 = 1$ for $2^0$):
-		\begin{itemize}
-			\item Check: $13 \bmod 2 = 1$ (odd) $\Rightarrow$ bit is 1
-			\item Multiply: $\texttt{result} = 1 \times 3 = 3$
-			\item Square: $\texttt{base} = 3 \times 3 = 9$
-			\item Shift: $\texttt{exponent} = 13 / 2 = 6$
-		\end{itemize}
-		
-		\item \textbf{Step 2} (bit $b_1 = 0$ for $2^1$):
-		\begin{itemize}
-			\item Check: $6 \bmod 2 = 0$ (even) $\Rightarrow$ bit is 0
-			\item No multiplication
-			\item Square: $\texttt{base} = 9 \times 9 = 81$
-			\item Shift: $\texttt{exponent} = 6 / 2 = 3$
-		\end{itemize}
-		
-		\item \textbf{Step 3} (bit $b_2 = 1$ for $2^2$):
-		\begin{itemize}
-			\item Check: $3 \bmod 2 = 1$ (odd) $\Rightarrow$ bit is 1
-			\item Multiply: $\texttt{result} = 3 \times 81 = 243$
-			\item Square: $\texttt{base} = 81 \times 81 = 6561$
-			\item Shift: $\texttt{exponent} = 3 / 2 = 1$
-		\end{itemize}
-		
-		\item \textbf{Step 4} (bit $b_3 = 1$ for $2^3$):
-		\begin{itemize}
-			\item Check: $1 \bmod 2 = 1$ (odd) $\Rightarrow$ bit is 1
-			\item Multiply: $\texttt{result} = 243 \times 6561 = 1594323$
-			\item Square: $\texttt{base} = 6561 \times 6561$ (not used)
-			\item Shift: $\texttt{exponent} = 1 / 2 = 0$
-		\end{itemize}
-		
-		\item \textbf{Termination}: $\texttt{exponent} = 0$, return $\texttt{result} = 1594323$
-	\end{enumerate}
-	
-	\subsection{Verification}
-	
-	\[
-	3^{13} = 3^1 \cdot 3^4 \cdot 3^8 = 3 \times 81 \times 6561 = 1594323 \quad \checkmark
-	\]
-	
 	\section{Complexity Analysis}
 	
 	\begin{itemize}
@@ -285,19 +238,13 @@
 	\section{Extension to Matrix Exponentiation}
 	
 	The beauty of the square-and-multiply algorithm is that it works for \emph{any} algebraic structure with an associative multiplication operation. Matrices satisfy this property, so the algorithm extends naturally to matrix exponentiation.
-	
-	\subsection{Mathematical Foundation}
-	
-	\subsubsection{Associativity of Matrix Multiplication}
-	
+
 	The key property that allows this algorithm to work is \textbf{associativity}. For matrices $A$, $B$, and $C$:
 	\[
 	(A \cdot B) \cdot C = A \cdot (B \cdot C)
 	\]
 	
 	This means we can compute products in any order without changing the result. This is crucial because our algorithm rearranges the order of multiplications.
-	
-	\subsubsection{Identity Element}
 	
 	Just as $1$ is the multiplicative identity for numbers ($a \cdot 1 = a$), the identity matrix $I$ serves this role for matrices:
 	\[
@@ -310,8 +257,6 @@
 	\]
 	
 	This allows us to initialize our result to $I$, just as we initialized the scalar result to $1$.
-	
-	\subsection{Why the Algorithm Works for Matrices}
 	
 	Let's prove that $A^{13}$ can be computed using the same binary decomposition. We have:
 	\[
@@ -328,7 +273,7 @@
 	A^{m+n} = A^m \cdot A^n \quad \text{(for any } m, n \geq 0\text{)}
 	\]
 	
-	\textbf{Proof of the exponent law for matrices:}
+	Proof of the exponent law for matrices:
 	\begin{align*}
 		A^{m+n} &= \underbrace{A \cdot A \cdot \ldots \cdot A}_{m+n \text{ times}} \\
 		&= \underbrace{A \cdot A \cdot \ldots \cdot A}_{m \text{ times}} \cdot \underbrace{A \cdot A \cdot \ldots \cdot A}_{n \text{ times}} \\
@@ -336,112 +281,7 @@
 	\end{align*}
 	
 	This proof works because matrix multiplication is associative, so we can group the multiplications however we want.
-	
-	\subsection{Detailed Mathematical Walkthrough}
-	
-	Let's trace how the algorithm computes $A^{13}$ step by step, showing the mathematical equivalence at each stage.
-	
-	\textbf{Initialization:}
-	\[
-	\text{result} = I, \quad \text{base} = A, \quad \text{exponent} = 13
-	\]
-	
-	\textbf{Step 1} (bit $b_0 = 1$, representing $2^0 = 1$):
-	\begin{itemize}
-		\item Since $13 \bmod 2 = 1$, we multiply:
-		\[
-		\text{result} = I \cdot A = A = A^1
-		\]
-		\item We square the base:
-		\[
-		\text{base} = A \cdot A = A^2
-		\]
-		\item Exponent becomes $\lfloor 13/2 \rfloor = 6$
-	\end{itemize}
-	
-	\textbf{Step 2} (bit $b_1 = 0$, representing $2^1 = 2$):
-	\begin{itemize}
-		\item Since $6 \bmod 2 = 0$, we don't multiply (bit is 0)
-		\item Result stays: $\text{result} = A^1$
-		\item We square the base:
-		\[
-		\text{base} = A^2 \cdot A^2 = A^4
-		\]
-		\item Exponent becomes $\lfloor 6/2 \rfloor = 3$
-	\end{itemize}
-	
-	\textbf{Step 3} (bit $b_2 = 1$, representing $2^2 = 4$):
-	\begin{itemize}
-		\item Since $3 \bmod 2 = 1$, we multiply:
-		\[
-		\text{result} = A^1 \cdot A^4 = A^{1+4} = A^5
-		\]
-		\item We square the base:
-		\[
-		\text{base} = A^4 \cdot A^4 = A^8
-		\]
-		\item Exponent becomes $\lfloor 3/2 \rfloor = 1$
-	\end{itemize}
-	
-	\textbf{Step 4} (bit $b_3 = 1$, representing $2^3 = 8$):
-	\begin{itemize}
-		\item Since $1 \bmod 2 = 1$, we multiply:
-		\[
-		\text{result} = A^5 \cdot A^8 = A^{5+8} = A^{13}
-		\]
-		\item Exponent becomes $\lfloor 1/2 \rfloor = 0$
-	\end{itemize}
-	
-	\textbf{Result:} We have successfully computed $A^{13}$ using only 7 matrix multiplications instead of 12!
-	
-	\subsection{General Mathematical Proof}
-	
-	\textbf{Theorem:} The square-and-multiply algorithm correctly computes $A^n$ for any matrix $A$ and non-negative integer $n$.
-	
-	\textbf{Proof by Induction on the binary representation:}
-	
-	Let $n = \sum_{i=0}^{k} b_i \cdot 2^i$ where $b_i \in \{0, 1\}$ is the binary representation.
-	
-	We want to show that the algorithm computes:
-	\[
-	A^n = A^{\sum_{i=0}^{k} b_i \cdot 2^i} = \prod_{i=0}^{k} (A^{2^i})^{b_i}
-	\]
-	
-	where $(A^{2^i})^{b_i} = A^{2^i}$ if $b_i = 1$, and $(A^{2^i})^{b_i} = I$ if $b_i = 0$.
-	
-	\textbf{Invariant:} After processing $j$ bits, we have:
-	\begin{align*}
-		\text{result} &= \prod_{i=0}^{j-1} (A^{2^i})^{b_i} \\
-		\text{base} &= A^{2^j}
-	\end{align*}
-	
-	\textbf{Base case} ($j = 0$): 
-	\[
-	\text{result} = I = \text{empty product}, \quad \text{base} = A = A^{2^0}
-	\]
-	
-	\textbf{Inductive step:} Assume the invariant holds after $j$ iterations. In iteration $j+1$:
-	\begin{itemize}
-		\item If $b_j = 1$: 
-		\[
-		\text{result}_{\text{new}} = \text{result}_{\text{old}} \cdot \text{base} = \prod_{i=0}^{j-1} (A^{2^i})^{b_i} \cdot A^{2^j} = \prod_{i=0}^{j} (A^{2^i})^{b_i}
-		\]
-		\item If $b_j = 0$:
-		\[
-		\text{result}_{\text{new}} = \text{result}_{\text{old}} = \prod_{i=0}^{j-1} (A^{2^i})^{b_i} = \prod_{i=0}^{j} (A^{2^i})^{b_i}
-		\]
-		(since $(A^{2^j})^0 = I$ contributes nothing)
-		\item Base is squared:
-		\[
-		\text{base}_{\text{new}} = \text{base}_{\text{old}}^2 = (A^{2^j})^2 = A^{2 \cdot 2^j} = A^{2^{j+1}}
-		\]
-	\end{itemize}
-	
-	After all $k+1$ iterations:
-	\[
-	\text{result} = \prod_{i=0}^{k} (A^{2^i})^{b_i} = A^{\sum_{i=0}^{k} b_i \cdot 2^i} = A^n \quad \square
-	\]
-	
+		
 	\subsection{Java Implementation for Matrices}
 	
 	\begin{lstlisting}
