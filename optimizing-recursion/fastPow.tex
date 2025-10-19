@@ -47,11 +47,11 @@
 	
 	The key insight is that any positive integer can be expressed as a sum of powers of 2. Consider computing $3^{13}$. We first convert the exponent 13 to binary using successive division by 2:
 	
-	\begin{align*}
-		13 \div 2 &= 6 \text{ remainder } 1 \\
-		6 \div 2 &= 3 \text{ remainder } 0 \\
-		3 \div 2 &= 1 \text{ remainder } 1 \\
-		1 \div 2 &= 0 \text{ remainder } 1
+    \begin{align*}
+		\frac{13}{2} &= 6 + 1 \\
+		\frac{6}{2} &= 3 + 0 \\
+		\frac{3}{2} &= 1 + 1 \\
+		\frac{1}{2} &= 0 + 1 \\
 	\end{align*}
 	
 	Reading the remainders from bottom to top yields $13 = 1101_2$. In expanded form:
@@ -71,9 +71,6 @@
 	Instead of computing 12 multiplications ($3 \times 3 \times \cdots \times 3$), we need only compute $3^8$, $3^4$, and $3^1$, then multiply these results together.
 	
 	\section{The Algorithm}
-	
-	\subsection{Core Idea}
-	
 	The algorithm processes the binary representation of the exponent from right to left (least significant bit to most significant bit), maintaining two values:
 	\begin{itemize}[itemsep=2pt]
 		\item \textbf{result}: Accumulates the final answer by multiplying in powers of the base corresponding to 1-bits
@@ -86,9 +83,7 @@
 		\item \textbf{Square the base}: Update \texttt{base} to \texttt{base}$^2$ to prepare for the next bit
 		\item \textbf{Shift to next bit}: Divide the exponent by 2 (integer division)
 	\end{enumerate}
-	
-	\subsection{Why Square at Every Step?}
-	
+
 	Squaring the base at each iteration is essential because it ensures we have the correct power available for each binary bit position. The progression is:
 	\begin{align*}
 		\text{Initially:} \quad & \texttt{base} = b^1 \\
@@ -100,7 +95,7 @@
 	
 	This sequence $b^1, b^2, b^4, b^8, \ldots, b^{2^k}$ corresponds exactly to the powers needed for each bit position in the binary representation. If we only squared when encountering a 1-bit, subsequent powers would be incorrect.
 	
-	\subsection{Java Implementation}
+	\section{Java Implementation}
 	
 	Here is the complete Java implementation of the fast exponentiation algorithm:
 	
@@ -200,26 +195,6 @@
 		}
 	\end{lstlisting}
 	
-	\section{Worked Example: Computing $3^{13}$}
-	
-	Let us trace the algorithm's execution for $3^{13}$, processing the binary representation $1101_2$ from right to left:
-	
-	\begin{table}[h]
-		\centering
-		\begin{tabular}{ccccccl}
-			\toprule
-			\textbf{Step} & \textbf{Exponent} & \textbf{Bit} & \textbf{Bit Value} & \textbf{Result} & \textbf{Base} & \textbf{Operation} \\
-			\midrule
-			Initial & 13 & -- & -- & 1 & 3 & Initialize \\
-			1 & 13 & $2^0$ & 1 & $1 \times 3 = 3$ & $3^2 = 9$ & Multiply, square \\
-			2 & 6 & $2^1$ & 0 & 3 & $9^2 = 81$ & Square only \\
-			3 & 3 & $2^2$ & 1 & $3 \times 81 = 243$ & $81^2 = 6561$ & Multiply, square \\
-			4 & 1 & $2^3$ & 1 & $243 \times 6561 = 1594323$ & -- & Multiply, done \\
-			\bottomrule
-		\end{tabular}
-		\caption{Step-by-step execution of the square-and-multiply algorithm for $3^{13}$}
-	\end{table}
-	
 	\section{Complexity Analysis}
 	
 	\begin{itemize}
@@ -282,7 +257,7 @@
 	
 	This proof works because matrix multiplication is associative, so we can group the multiplications however we want.
 		
-	\subsection{Java Implementation for Matrices}
+	\section{Java Implementation for Matrices}
 	
 	\begin{lstlisting}
 		public class MatrixExponentiation {
