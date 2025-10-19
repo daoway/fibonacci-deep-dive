@@ -3,182 +3,521 @@
 \usepackage[utf8]{inputenc}
 \usepackage{amsmath}
 \usepackage{amsfonts}
+\usepackage{amssymb}
 \usepackage{geometry}
 \geometry{a4paper, margin=1in}
 \usepackage{enumitem}
 \usepackage{listings}
 \usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{array}
 
-% Defining code listing style
+% Defining code listing style for Java
 \lstset{
-    basicstyle=\ttfamily\small,
-    breaklines=true,
-    frame=single,
-    numbers=left,
-    numberstyle=\tiny,
-    keywordstyle=\color{blue},
-    commentstyle=\color{gray}
+	language=Java,
+	basicstyle=\ttfamily\small,
+	breaklines=true,
+	frame=single,
+	numbers=left,
+	numberstyle=\tiny\color{gray},
+	keywordstyle=\color{blue}\bfseries,
+	commentstyle=\color{green!60!black}\itshape,
+	stringstyle=\color{red},
+	showstringspaces=false,
+	tabsize=4
 }
 
 % Setting font package last
 \usepackage{noto}
 
 \begin{document}
-
-    \title{Fast Exponentiation: The Square-and-Multiply Algorithm}
-    \author{}
-    \date{}
-    \maketitle
-
-    \section{Introduction}
-% Explaining the purpose and context
-    Exponentiation, or raising a number to a power, is a common operation in mathematics and computer science. For example, computing \(3^{13}\) means multiplying 3 by itself 13 times. However, for large exponents, this naive approach is slow and inefficient. The \emph{square-and-multiply} algorithm (also known as fast exponentiation) provides a much faster way to compute large powers by using the binary representation of the exponent. This document explains how the algorithm works, how to compute the binary representation of an exponent, why the algorithm is efficient, and walks through an example for students.
-
-    \section{Converting the Exponent to Binary}
-% Explaining how to convert the exponent to binary
-    The square-and-multiply algorithm relies on the binary representation of the exponent. Any positive integer can be expressed as a sum of powers of 2 by converting it to binary. For example, let’s convert the exponent 13 to binary by repeatedly dividing by 2 and recording the remainders:
-
-    \begin{enumerate}
-        \item Divide \(13 \div 2 = 6\) remainder \(1\) (since \(13 = 2 \cdot 6 + 1\)).
-        \item Divide \(6 \div 2 = 3\) remainder \(0\) (since \(6 = 2 \cdot 3 + 0\)).
-        \item Divide \(3 \div 2 = 1\) remainder \(1\) (since \(3 = 2 \cdot 1 + 1\)).
-        \item Divide \(1 \div 2 = 0\) remainder \(1\) (since \(1 = 2 \cdot 0 + 1\)).
-        \item Stop when the quotient is 0.
-    \end{enumerate}
-
-    The binary representation is obtained by reading the remainders from bottom to top: \(1101\). Thus:
-    \[
-        13 = 1 \cdot 2^3 + 1 \cdot 2^2 + 0 \cdot 2^1 + 1 \cdot 2^0 = 8 + 4 + 0 + 1.
-    \]
-    This means \(3^{13}\) can be written as:
-    \[
-        3^{13} = 3^{8 + 4 + 1} = 3^8 \cdot 3^4 \cdot 3^1.
-    \]
-    The algorithm processes these bits (1, 0, 1, 1) from right to left to compute the result efficiently.
-
-    \section{The Idea Behind the Algorithm}
-% Introducing the binary representation concept
-    The key idea is to use the binary form of the exponent to minimize multiplications. Instead of performing 12 multiplications for \(3^{13}\), we compute only the powers corresponding to the 1’s in the binary representation (e.g., \(3^8\), \(3^4\), \(3^1\)). We achieve this by:
-    \begin{itemize}
-        \item \textbf{Squaring} the base at each step to double its power (e.g., from \(3^2\) to \(3^4\), then to \(3^8\)).
-        \item \textbf{Multiplying} the result by the current base only when the corresponding binary bit is 1.
-    \end{itemize}
-    This reduces the number of operations to approximately \(\log_2 n\), where \(n\) is the exponent.
-
-    \section{The Algorithm}
-% Describing the algorithm step-by-step
-    The square-and-multiply algorithm can be described as follows:
-    \begin{enumerate}
-        \item Initialize a \texttt{result} to 1, the \texttt{base} to the given number, and the \texttt{exponent} to the given power.
-        \item While the \texttt{exponent} is greater than 0:
-        \begin{enumerate}[label=(\alph*)]
-            \item Check if the \texttt{exponent} is odd (equivalent to the current binary bit being 1).
-            \item If odd, multiply \texttt{result} by the current \texttt{base}.
-            \item Square the \texttt{base} (i.e., \texttt{base = base * base}).
-            \item Divide the \texttt{exponent} by 2 (integer division, moving to the next binary bit).
-        \end{enumerate}
-        \item Return the \texttt{result}.
-    \end{enumerate}
-
-    Here is the algorithm in pseudocode:
-    \begin{lstlisting}[language=Java]
-function pow(base, exponent):
-    if exponent < 0:
-        throw error "Exponent must be non-negative"
-    if exponent = 0:
-        return 1
-    result = 1
-    while exponent > 0:
-        if exponent % 2 == 1:
-            result = result * base
-        base = base * base
-        exponent = exponent / 2
-    return result
-    \end{lstlisting}
-
-    \section{Why Square at Every Step?}
-% Explaining the squaring step
-    Squaring the base at every step is crucial because it doubles the exponent of the base, preparing it for the next binary bit. For example:
-    \begin{itemize}
-        \item Initially, \texttt{base} represents \(base^1\).
-        \item After the first square, \texttt{base} becomes \(base^2\).
-        \item After the second square, \texttt{base} becomes \(base^4\), and so on.
-    \end{itemize}
-    This ensures that when we encounter a binary bit of 1, the \texttt{base} corresponds to the correct power of 2 (e.g., \(base^4\) for the bit representing \(2^2\)). If we only squared the base when the bit is 1, we would not have the correct power for subsequent bits, leading to an incorrect result.
-
-    \section{Example: Computing \(3^{13}\)}
-% Walking through the example with binary conversion
-    Let’s start by converting the exponent 13 to binary using successive division by 2, as shown below:
-
-    \begin{align*}
-        13 &= (?)_2 \\
-        \frac{13}{2} &= 6 + 1 \\
-        \frac{6}{2} &= 3 + 0 \\
-        \frac{3}{2} &= 1 + 1 \\
-        \frac{1}{2} &= 0 + 1 \\
-    \end{align*}
-    Reading the remainders from bottom to top, we get \(B = 1101_2\), where \(b_3 = 1\), \(b_2 = 1\), \(b_1 = 0\), \(b_0 = 1\). Thus:
-    \[
-        N = b_3 \cdot 2^3 + b_2 \cdot 2^2 + b_1 \cdot 2^1 + b_0 \cdot 2^0,
-    \]
-    \[
-        N = 1 \cdot 2^3 + 1 \cdot 2^2 + 0 \cdot 2^1 + 1 \cdot 2^0 = 8 + 4 + 0 + 1 = 13.
-    \]
-    So, \(3^{13} = 3^{8 + 4 + 1} = 3^8 \cdot 3^4 \cdot 3^1\). Now, let’s compute it using the algorithm, processing the bits 1, 0, 1, 1 from right to left.
-
-    \begin{enumerate}
-        \item \textbf{Initialization}: Set \texttt{result = 1}, \texttt{base = 3}, \texttt{exponent = 13}.
-        \item \textbf{Step 1 (bit 1, \(2^0\))}:
-        \begin{itemize}
-            \item \texttt{exponent = 13}, which is odd (\texttt{13 \% 2 = 1}).
-            \item Multiply: \texttt{result = 1 * 3 = 3} (include \(3^1\)).
-            \item Square: \texttt{base = 3 * 3 = 9} (now \texttt{base = \(3^2\)}).
-            \item Divide: \texttt{exponent = 13 / 2 = 6}.
-        \end{itemize}
-        \item \textbf{Step 2 (bit 0, \(2^1\))}:
-        \begin{itemize}
-            \item \texttt{exponent = 6}, which is even (\texttt{6 \% 2 = 0}).
-            \item No multiplication (bit is 0).
-            \item Square: \texttt{base = 9 * 9 = 81} (now \texttt{base = \(3^4\)}).
-            \item Divide: \texttt{exponent = 6 / 2 = 3}.
-        \end{itemize}
-        \item \textbf{Step 3 (bit 1, \(2^2\))}:
-        \begin{itemize}
-            \item \texttt{exponent = 3}, which is odd (\texttt{3 \% 2 = 1}).
-            \item Multiply: \texttt{result = 3 * 81 = 243} (include \(3^4\)).
-            \item Square: \texttt{base = 81 * 81 = 6561} (now \texttt{base = \(3^8\)}).
-            \item Divide: \texttt{exponent = 3 / 2 = 1}.
-        \end{itemize}
-        \item \textbf{Step 4 (bit 1, \(2^3\))}:
-        \begin{itemize}
-            \item \texttt{exponent = 1}, which is odd (\texttt{1 \% 2 = 1}).
-            \item Multiply: \texttt{result = 243 * 6561 = 1594323} (include \(3^8\)).
-            \item Square: \texttt{base = 6561 * 6561 = 43046721} (not used).
-            \item Divide: \texttt{exponent = 1 / 2 = 0}.
-        \end{itemize}
-        \item \textbf{End}: \texttt{exponent = 0}, return \texttt{result = 1594323}.
-    \end{enumerate}
-
-    The final result is \(3^{13} = 1594323\). Let’s verify:
-    \[
-        3^1 = 3, \quad 3^4 = 81, \quad 3^8 = 6561.
-    \]
-    \[
-        3^1 \cdot 3^4 \cdot 3^8 = 3 \cdot 81 \cdot 6561 = 243 \cdot 6561 = 1594323.
-    \]
-    The result is correct.
-
-    \section{Efficiency}
-% Explaining why the algorithm is efficient
-    The naive approach to compute \(3^{13}\) requires 12 multiplications. The square-and-multiply algorithm uses:
-    \begin{itemize}
-        \item 4 squaring operations (one for each bit of 13, which is 1101).
-        \item 3 multiplications (for the three 1’s in the binary representation).
-    \end{itemize}
-    This totals 7 operations, which is much fewer than 12. For larger exponents, the savings are even greater, as the number of operations is proportional to \(\log_2 n\), where \(n\) is the exponent.
-
-    \section{Conclusion}
-% Summarizing the key points
-    The square-and-multiply algorithm is a powerful tool for computing large powers efficiently. By leveraging the binary representation of the exponent, obtained through successive division by 2, it reduces the number of multiplications needed. Squaring the base at every step ensures that the correct powers are available when needed, and multiplying only for 1’s in the binary form minimizes operations. This method is widely used in computer science, especially in cryptography, where large exponents are common.
-
+	
+	\title{Fast Exponentiation: Introduction to Matrix Exponentiation}
+	\author{}
+	\date{}
+	\maketitle
+	
+	\tableofcontents
+	
+	\section{Introduction}
+	
+	Exponentiation---raising a number to a power---is a fundamental operation in mathematics and computer science. Computing $b^n$ naively requires $n-1$ multiplications, which becomes prohibitively expensive for large exponents. The \emph{square-and-multiply algorithm} (also known as \emph{binary exponentiation} or \emph{exponentiation by squaring}) provides an elegant solution by leveraging the binary representation of the exponent.
+	
+	\section{The Binary Representation}
+	
+	The key insight is that any positive integer can be expressed as a sum of powers of 2. Consider computing $3^{13}$. We first convert the exponent 13 to binary using successive division by 2:
+	
+	\begin{align*}
+		13 \div 2 &= 6 \text{ remainder } 1 \\
+		6 \div 2 &= 3 \text{ remainder } 0 \\
+		3 \div 2 &= 1 \text{ remainder } 1 \\
+		1 \div 2 &= 0 \text{ remainder } 1
+	\end{align*}
+	
+	Reading the remainders from bottom to top yields $13 = 1101_2$. In expanded form:
+	\[
+	13 = b_3 \cdot 2^3 + b_2 \cdot 2^2 + b_1 \cdot 2^1 + b_0 \cdot 2^0
+	\]
+	where $b_3 = 1$, $b_2 = 1$, $b_1 = 0$, $b_0 = 1$. Thus:
+	\[
+	13 = 1 \cdot 8 + 1 \cdot 4 + 0 \cdot 2 + 1 \cdot 1 = 8 + 4 + 1
+	\]
+	
+	This decomposition allows us to rewrite the exponentiation:
+	\[
+	3^{13} = 3^{8+4+1} = 3^8 \cdot 3^4 \cdot 3^1
+	\]
+	
+	Instead of computing 12 multiplications ($3 \times 3 \times \cdots \times 3$), we need only compute $3^8$, $3^4$, and $3^1$, then multiply these results together.
+	
+	\section{The Algorithm}
+	
+	\subsection{Core Idea}
+	
+	The algorithm processes the binary representation of the exponent from right to left (least significant bit to most significant bit), maintaining two values:
+	\begin{itemize}[itemsep=2pt]
+		\item \textbf{result}: Accumulates the final answer by multiplying in powers of the base corresponding to 1-bits
+		\item \textbf{base}: Doubles its exponent at each step through repeated squaring
+	\end{itemize}
+	
+	At each iteration:
+	\begin{enumerate}[itemsep=2pt]
+		\item \textbf{Check the bit}: If the current bit is 1 (exponent is odd), multiply \texttt{result} by the current \texttt{base}
+		\item \textbf{Square the base}: Update \texttt{base} to \texttt{base}$^2$ to prepare for the next bit
+		\item \textbf{Shift to next bit}: Divide the exponent by 2 (integer division)
+	\end{enumerate}
+	
+	\subsection{Why Square at Every Step?}
+	
+	Squaring the base at each iteration is essential because it ensures we have the correct power available for each binary bit position. The progression is:
+	\begin{align*}
+		\text{Initially:} \quad & \texttt{base} = b^1 \\
+		\text{After 1st square:} \quad & \texttt{base} = b^2 \\
+		\text{After 2nd square:} \quad & \texttt{base} = b^4 \\
+		\text{After 3rd square:} \quad & \texttt{base} = b^8 \\
+		& \vdots
+	\end{align*}
+	
+	This sequence $b^1, b^2, b^4, b^8, \ldots, b^{2^k}$ corresponds exactly to the powers needed for each bit position in the binary representation. If we only squared when encountering a 1-bit, subsequent powers would be incorrect.
+	
+	\subsection{Java Implementation}
+	
+	Here is the complete Java implementation of the fast exponentiation algorithm:
+	
+	\begin{lstlisting}
+		public class FastExponentiation {
+			
+			/**
+			* Computes base^exponent using the square-and-multiply algorithm
+			* Time Complexity: O(log n) where n is the exponent
+			* 
+			* @param base the base number
+			* @param exponent the exponent (must be non-negative)
+			* @return base raised to the power of exponent
+			* @throws IllegalArgumentException if exponent is negative
+			*/
+			public static long power(long base, int exponent) {
+				// Handle negative exponents
+				if (exponent < 0) {
+					throw new IllegalArgumentException(
+					"Exponent must be non-negative"
+					);
+				}
+				
+				// Base case: any number to the power 0 is 1
+				if (exponent == 0) {
+					return 1;
+				}
+				
+				long result = 1;
+				long currentBase = base;
+				int currentExponent = exponent;
+				
+				while (currentExponent > 0) {
+					// Check if the current exponent is odd
+					if (currentExponent % 2 == 1) {
+						result *= currentBase;
+					}
+					
+					// Square the base for the next bit position
+					currentBase *= currentBase;
+					
+					// Move to the next bit (integer division by 2)
+					currentExponent /= 2;
+				}
+				
+				return result;
+			}
+			
+			/**
+			* Modular exponentiation: computes (base^exponent) % modulus
+			* Prevents overflow by taking modulus at each step
+			* Essential for cryptographic applications
+			*/
+			public static long modularPower(long base, int exponent, long modulus) {
+				if (exponent < 0) {
+					throw new IllegalArgumentException(
+					"Exponent must be non-negative"
+					);
+				}
+				
+				if (modulus <= 0) {
+					throw new IllegalArgumentException(
+					"Modulus must be positive"
+					);
+				}
+				
+				long result = 1;
+				base %= modulus; // Reduce base first
+				
+				while (exponent > 0) {
+					if (exponent % 2 == 1) {
+						result = (result * base) % modulus;
+					}
+					
+					base = (base * base) % modulus;
+					exponent /= 2;
+				}
+				
+				return result;
+			}
+			
+			// Test the implementation
+			public static void main(String[] args) {
+				System.out.println("Computing 3^13:");
+				System.out.println("Result: " + power(3, 13));
+				System.out.println("Expected: 1594323");
+				System.out.println();
+				
+				System.out.println("Computing 2^10:");
+				System.out.println("Result: " + power(2, 10));
+				System.out.println("Expected: 1024");
+				System.out.println();
+				
+				System.out.println("Modular exponentiation: (7^256) % 13:");
+				System.out.println("Result: " + modularPower(7, 256, 13));
+			}
+		}
+	\end{lstlisting}
+	
+	\section{Worked Example: Computing $3^{13}$}
+	
+	Let us trace the algorithm's execution for $3^{13}$, processing the binary representation $1101_2$ from right to left:
+	
+	\begin{table}[h]
+		\centering
+		\begin{tabular}{ccccccl}
+			\toprule
+			\textbf{Step} & \textbf{Exponent} & \textbf{Bit} & \textbf{Bit Value} & \textbf{Result} & \textbf{Base} & \textbf{Operation} \\
+			\midrule
+			Initial & 13 & -- & -- & 1 & 3 & Initialize \\
+			1 & 13 & $2^0$ & 1 & $1 \times 3 = 3$ & $3^2 = 9$ & Multiply, square \\
+			2 & 6 & $2^1$ & 0 & 3 & $9^2 = 81$ & Square only \\
+			3 & 3 & $2^2$ & 1 & $3 \times 81 = 243$ & $81^2 = 6561$ & Multiply, square \\
+			4 & 1 & $2^3$ & 1 & $243 \times 6561 = 1594323$ & -- & Multiply, done \\
+			\bottomrule
+		\end{tabular}
+		\caption{Step-by-step execution of the square-and-multiply algorithm for $3^{13}$}
+	\end{table}
+	
+	\subsection{Detailed Trace}
+	
+	\begin{enumerate}[leftmargin=*]
+		\item \textbf{Initialization}: 
+		\[\texttt{result} = 1, \quad \texttt{base} = 3, \quad \texttt{exponent} = 13\]
+		
+		\item \textbf{Step 1} (bit $b_0 = 1$ for $2^0$):
+		\begin{itemize}
+			\item Check: $13 \bmod 2 = 1$ (odd) $\Rightarrow$ bit is 1
+			\item Multiply: $\texttt{result} = 1 \times 3 = 3$
+			\item Square: $\texttt{base} = 3 \times 3 = 9$
+			\item Shift: $\texttt{exponent} = 13 / 2 = 6$
+		\end{itemize}
+		
+		\item \textbf{Step 2} (bit $b_1 = 0$ for $2^1$):
+		\begin{itemize}
+			\item Check: $6 \bmod 2 = 0$ (even) $\Rightarrow$ bit is 0
+			\item No multiplication
+			\item Square: $\texttt{base} = 9 \times 9 = 81$
+			\item Shift: $\texttt{exponent} = 6 / 2 = 3$
+		\end{itemize}
+		
+		\item \textbf{Step 3} (bit $b_2 = 1$ for $2^2$):
+		\begin{itemize}
+			\item Check: $3 \bmod 2 = 1$ (odd) $\Rightarrow$ bit is 1
+			\item Multiply: $\texttt{result} = 3 \times 81 = 243$
+			\item Square: $\texttt{base} = 81 \times 81 = 6561$
+			\item Shift: $\texttt{exponent} = 3 / 2 = 1$
+		\end{itemize}
+		
+		\item \textbf{Step 4} (bit $b_3 = 1$ for $2^3$):
+		\begin{itemize}
+			\item Check: $1 \bmod 2 = 1$ (odd) $\Rightarrow$ bit is 1
+			\item Multiply: $\texttt{result} = 243 \times 6561 = 1594323$
+			\item Square: $\texttt{base} = 6561 \times 6561$ (not used)
+			\item Shift: $\texttt{exponent} = 1 / 2 = 0$
+		\end{itemize}
+		
+		\item \textbf{Termination}: $\texttt{exponent} = 0$, return $\texttt{result} = 1594323$
+	\end{enumerate}
+	
+	\subsection{Verification}
+	
+	\[
+	3^{13} = 3^1 \cdot 3^4 \cdot 3^8 = 3 \times 81 \times 6561 = 1594323 \quad \checkmark
+	\]
+	
+	\section{Complexity Analysis}
+	
+	\begin{itemize}
+		\item \textbf{Naive approach}: $O(n)$ multiplications (requires $n-1$ multiplications)
+		\item \textbf{Square-and-multiply}: $O(\log n)$ multiplications
+	\end{itemize}
+	
+	For $3^{13}$:
+	\begin{itemize}
+		\item Naive: 12 multiplications
+		\item Square-and-multiply: 7 operations (4 squarings + 3 multiplications)
+	\end{itemize}
+	
+	This efficiency gain becomes crucial when working with large exponents or when the "multiplication" operation is expensive, as it is with matrices.
+	
+	\section{Extension to Matrix Exponentiation}
+	
+	The beauty of the square-and-multiply algorithm is that it works for \emph{any} algebraic structure with an associative multiplication operation. Matrices satisfy this property, so the algorithm extends naturally to matrix exponentiation.
+	
+	\subsection{Mathematical Foundation}
+	
+	\subsubsection{Associativity of Matrix Multiplication}
+	
+	The key property that allows this algorithm to work is \textbf{associativity}. For matrices $A$, $B$, and $C$:
+	\[
+	(A \cdot B) \cdot C = A \cdot (B \cdot C)
+	\]
+	
+	This means we can compute products in any order without changing the result. This is crucial because our algorithm rearranges the order of multiplications.
+	
+	\subsubsection{Identity Element}
+	
+	Just as $1$ is the multiplicative identity for numbers ($a \cdot 1 = a$), the identity matrix $I$ serves this role for matrices:
+	\[
+	A \cdot I = I \cdot A = A
+	\]
+	
+	For a $2 \times 2$ matrix:
+	\[
+	I = \begin{pmatrix} 1 & 0 \\ 0 & 1 \end{pmatrix}
+	\]
+	
+	This allows us to initialize our result to $I$, just as we initialized the scalar result to $1$.
+	
+	\subsection{Why the Algorithm Works for Matrices}
+	
+	Let's prove that $A^{13}$ can be computed using the same binary decomposition. We have:
+	\[
+	13 = 8 + 4 + 1 = 2^3 + 2^2 + 2^0
+	\]
+	
+	Therefore:
+	\[
+	A^{13} = A^{8+4+1} = A^8 \cdot A^4 \cdot A^1
+	\]
+	
+	This equality holds because of the \textbf{laws of exponents}, which work for matrices:
+	\[
+	A^{m+n} = A^m \cdot A^n \quad \text{(for any } m, n \geq 0\text{)}
+	\]
+	
+	\textbf{Proof of the exponent law for matrices:}
+	\begin{align*}
+		A^{m+n} &= \underbrace{A \cdot A \cdot \ldots \cdot A}_{m+n \text{ times}} \\
+		&= \underbrace{A \cdot A \cdot \ldots \cdot A}_{m \text{ times}} \cdot \underbrace{A \cdot A \cdot \ldots \cdot A}_{n \text{ times}} \\
+		&= A^m \cdot A^n
+	\end{align*}
+	
+	This proof works because matrix multiplication is associative, so we can group the multiplications however we want.
+	
+	\subsection{Detailed Mathematical Walkthrough}
+	
+	Let's trace how the algorithm computes $A^{13}$ step by step, showing the mathematical equivalence at each stage.
+	
+	\textbf{Initialization:}
+	\[
+	\text{result} = I, \quad \text{base} = A, \quad \text{exponent} = 13
+	\]
+	
+	\textbf{Step 1} (bit $b_0 = 1$, representing $2^0 = 1$):
+	\begin{itemize}
+		\item Since $13 \bmod 2 = 1$, we multiply:
+		\[
+		\text{result} = I \cdot A = A = A^1
+		\]
+		\item We square the base:
+		\[
+		\text{base} = A \cdot A = A^2
+		\]
+		\item Exponent becomes $\lfloor 13/2 \rfloor = 6$
+	\end{itemize}
+	
+	\textbf{Step 2} (bit $b_1 = 0$, representing $2^1 = 2$):
+	\begin{itemize}
+		\item Since $6 \bmod 2 = 0$, we don't multiply (bit is 0)
+		\item Result stays: $\text{result} = A^1$
+		\item We square the base:
+		\[
+		\text{base} = A^2 \cdot A^2 = A^4
+		\]
+		\item Exponent becomes $\lfloor 6/2 \rfloor = 3$
+	\end{itemize}
+	
+	\textbf{Step 3} (bit $b_2 = 1$, representing $2^2 = 4$):
+	\begin{itemize}
+		\item Since $3 \bmod 2 = 1$, we multiply:
+		\[
+		\text{result} = A^1 \cdot A^4 = A^{1+4} = A^5
+		\]
+		\item We square the base:
+		\[
+		\text{base} = A^4 \cdot A^4 = A^8
+		\]
+		\item Exponent becomes $\lfloor 3/2 \rfloor = 1$
+	\end{itemize}
+	
+	\textbf{Step 4} (bit $b_3 = 1$, representing $2^3 = 8$):
+	\begin{itemize}
+		\item Since $1 \bmod 2 = 1$, we multiply:
+		\[
+		\text{result} = A^5 \cdot A^8 = A^{5+8} = A^{13}
+		\]
+		\item Exponent becomes $\lfloor 1/2 \rfloor = 0$
+	\end{itemize}
+	
+	\textbf{Result:} We have successfully computed $A^{13}$ using only 7 matrix multiplications instead of 12!
+	
+	\subsection{General Mathematical Proof}
+	
+	\textbf{Theorem:} The square-and-multiply algorithm correctly computes $A^n$ for any matrix $A$ and non-negative integer $n$.
+	
+	\textbf{Proof by Induction on the binary representation:}
+	
+	Let $n = \sum_{i=0}^{k} b_i \cdot 2^i$ where $b_i \in \{0, 1\}$ is the binary representation.
+	
+	We want to show that the algorithm computes:
+	\[
+	A^n = A^{\sum_{i=0}^{k} b_i \cdot 2^i} = \prod_{i=0}^{k} (A^{2^i})^{b_i}
+	\]
+	
+	where $(A^{2^i})^{b_i} = A^{2^i}$ if $b_i = 1$, and $(A^{2^i})^{b_i} = I$ if $b_i = 0$.
+	
+	\textbf{Invariant:} After processing $j$ bits, we have:
+	\begin{align*}
+		\text{result} &= \prod_{i=0}^{j-1} (A^{2^i})^{b_i} \\
+		\text{base} &= A^{2^j}
+	\end{align*}
+	
+	\textbf{Base case} ($j = 0$): 
+	\[
+	\text{result} = I = \text{empty product}, \quad \text{base} = A = A^{2^0}
+	\]
+	
+	\textbf{Inductive step:} Assume the invariant holds after $j$ iterations. In iteration $j+1$:
+	\begin{itemize}
+		\item If $b_j = 1$: 
+		\[
+		\text{result}_{\text{new}} = \text{result}_{\text{old}} \cdot \text{base} = \prod_{i=0}^{j-1} (A^{2^i})^{b_i} \cdot A^{2^j} = \prod_{i=0}^{j} (A^{2^i})^{b_i}
+		\]
+		\item If $b_j = 0$:
+		\[
+		\text{result}_{\text{new}} = \text{result}_{\text{old}} = \prod_{i=0}^{j-1} (A^{2^i})^{b_i} = \prod_{i=0}^{j} (A^{2^i})^{b_i}
+		\]
+		(since $(A^{2^j})^0 = I$ contributes nothing)
+		\item Base is squared:
+		\[
+		\text{base}_{\text{new}} = \text{base}_{\text{old}}^2 = (A^{2^j})^2 = A^{2 \cdot 2^j} = A^{2^{j+1}}
+		\]
+	\end{itemize}
+	
+	After all $k+1$ iterations:
+	\[
+	\text{result} = \prod_{i=0}^{k} (A^{2^i})^{b_i} = A^{\sum_{i=0}^{k} b_i \cdot 2^i} = A^n \quad \square
+	\]
+	
+	\subsection{Java Implementation for Matrices}
+	
+	\begin{lstlisting}
+		public class MatrixExponentiation {
+			
+			/**
+			* Computes A^n using the square-and-multiply algorithm
+			* Time Complexity: O(d^3 * log n) where d is matrix dimension
+			*/
+			public static int[][] matrixPower(int[][] A, int n) {
+				if (n < 0) {
+					throw new IllegalArgumentException(
+					"Exponent must be non-negative"
+					);
+				}
+				
+				int size = A.length;
+				int[][] result = identity(size); // Start with I
+				int[][] base = copyMatrix(A);    // Start with A
+				
+				while (n > 0) {
+					if (n % 2 == 1) {
+						// Include current power of A
+						result = multiply(result, base);
+					}
+					// Square the base for next bit position
+					base = multiply(base, base);
+					n /= 2;
+				}
+				
+				return result;
+			}
+			
+			/**
+			* Creates an identity matrix of given size
+			*/
+			private static int[][] identity(int size) {
+				int[][] I = new int[size][size];
+				for (int i = 0; i < size; i++) {
+					I[i][i] = 1;
+				}
+				return I;
+			}
+			
+			/**
+			* Multiplies two matrices
+			*/
+			private static int[][] multiply(int[][] A, int[][] B) {
+				int n = A.length;
+				int[][] C = new int[n][n];
+				
+				for (int i = 0; i < n; i++) {
+					for (int j = 0; j < n; j++) {
+						for (int k = 0; k < n; k++) {
+							C[i][j] += A[i][k] * B[k][j];
+						}
+					}
+				}
+				
+				return C;
+			}
+			
+			/**
+			* Creates a copy of a matrix
+			*/
+			private static int[][] copyMatrix(int[][] A) {
+				int n = A.length;
+				int[][] copy = new int[n][n];
+				for (int i = 0; i < n; i++) {
+					for (int j = 0; j < n; j++) {
+						copy[i][j] = A[i][j];
+					}
+				}
+				return copy;
+			}
+		}
+	\end{lstlisting}
+	
 \end{document}
