@@ -6,18 +6,12 @@ F = x / (1 - x - x ** 2)
 
 
 def fib_from_derivative(n: int) -> int:
-    """
-    Compute the n-th Fibonacci number using the Maclaurin series:
-        F_n = F^(n)(0) / n!
-    where F(x) = x / (1 - x - x^2)
-    """
-    Fn_deriv = sp.diff(F, x, n)
+    Fn_deriv = sp.diff(F, x, n)  # Take n-th derivative
     Fn_at_0 = Fn_deriv.subs(x, 0)
     Fn_value = Fn_at_0 / sp.factorial(n)
     return int(Fn_value.evalf())
 
 
-# Compare the two methods
 print(f"{'n':>3} | {'Maclaurin (deriv)':>20} | {'Iterative':>12}")
 print("-" * 42)
 
