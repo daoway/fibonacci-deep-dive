@@ -1,0 +1,342 @@
+% Setting up the document with necessary packages
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{geometry}
+\geometry{a4paper, margin=1in}
+\usepackage{enumitem}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{array}
+
+\usepackage{tikz}
+
+% Defining code listing style for Java
+\lstset{
+	language=Java,
+	basicstyle=\ttfamily\small,
+	breaklines=true,
+	frame=single,
+	numbers=left,
+	numberstyle=\tiny\color{gray},
+	keywordstyle=\color{blue}\bfseries,
+	commentstyle=\color{green!60!black}\itshape,
+	stringstyle=\color{red},
+	showstringspaces=false,
+	tabsize=4
+}
+
+% Setting font package last
+\usepackage{noto}
+\newcommand*\circled[1]{\tikz[baseline=(char.base)]{
+		\node[shape=circle,draw,inner sep=1pt] (char) {#1};}}
+	
+\begin{document}
+	
+	\title{Fast Exponentiation}
+	\author{}
+	\date{}
+	\maketitle
+	
+	\tableofcontents
+	
+	\section{Introduction}
+	
+	Exponentiation---raising a number to a power---is a fundamental operation in mathematics and computer science. Computing $b^n$ naively requires $n-1$ multiplications, which becomes prohibitively expensive for large exponents. The \emph{square-and-multiply algorithm} (also known as \emph{binary exponentiation} or \emph{exponentiation by squaring}) provides an elegant solution by leveraging the binary representation of the exponent.
+	
+	\section{The Binary Representation}
+	
+	The key insight is that any positive integer can be expressed as a sum of powers of 2. Consider computing $3^{13}$. We first convert the exponent 13 to binary using successive division by 2:
+	
+    \begin{align*}
+		\frac{13}{2} & \rightarrow 2 \cdot \underline{6} + \circled{1} \\
+		\frac{6}{2} & \rightarrow 2 \cdot \underline{3} + \circled{0} \\
+		\frac{3}{2} & \rightarrow 2 \cdot \underline{1} + \circled{1} \\
+		\frac{1}{2} & \rightarrow 2 \cdot 0 + \circled{1} \\
+	\end{align*}
+	
+	Reading the remainders from bottom to top yields $13 = 1101_2$. In expanded form:
+	\[
+	13 = b_3 \cdot 2^3 + b_2 \cdot 2^2 + b_1 \cdot 2^1 + b_0 \cdot 2^0
+	\]
+	where $b_3 = 1$, $b_2 = 1$, $b_1 = 0$, $b_0 = 1$. Thus:
+	\[
+	13 = 1 \cdot 8 + 1 \cdot 4 + 0 \cdot 2 + 1 \cdot 1 = 8 + 4 + 1
+	\]
+	
+	This decomposition allows us to rewrite the exponentiation:
+	\[
+	3^{13} = 3^{8+4+1} = 3^8 \cdot 3^4 \cdot 3^1
+	\]
+	
+	Instead of computing 12 multiplications ($3 \times 3 \times \cdots \times 3$), we need only compute $3^8$, $3^4$, and $3^1$, then multiply these results together.
+	
+	\section{Binary Exponentiation Algorithm}
+	The algorithm processes the binary representation of the exponent from right to left (least significant bit to most significant bit), maintaining two values:
+	\begin{itemize}[itemsep=2pt]
+		\item \textbf{result}: Accumulates the final answer by multiplying in powers of the base corresponding to 1-bits
+		\item \textbf{base}: Doubles its exponent at each step through repeated squaring
+	\end{itemize}
+	
+	At each iteration:
+	\begin{enumerate}[itemsep=2pt]
+		\item \textbf{Check the bit}: If the current bit is 1 (exponent is odd), multiply \texttt{result} by the current \texttt{base}
+		\item \textbf{Square the base}: Update \texttt{base} to \texttt{base}$^2$ to prepare for the next bit
+		\item \textbf{Shift to next bit}: Divide the exponent by 2 (integer division)
+	\end{enumerate}
+
+	Squaring the base at each iteration is essential because it ensures we have the correct power available for each binary bit position. The progression is:
+	\begin{align*}
+		\text{Initially:} \quad & \texttt{base} = b^1 \\
+		\text{After 1st square:} \quad & \texttt{base} = b^2 \\
+		\text{After 2nd square:} \quad & \texttt{base} = b^4 \\
+		\text{After 3rd square:} \quad & \texttt{base} = b^8 \\
+		& \vdots
+	\end{align*}
+	
+	This sequence $b^1, b^2, b^4, b^8, \ldots, b^{2^k}$ corresponds exactly to the powers needed for each bit position in the binary representation. If we only squared when encountering a 1-bit, subsequent powers would be incorrect.
+	
+	\section{Java Implementation}
+	
+	Here is the complete Java implementation of the fast exponentiation algorithm:
+	
+	\begin{lstlisting}
+		public class FastExponentiation {
+			
+			/**
+			* Computes base^exponent using the square-and-multiply algorithm
+			* Time Complexity: O(log n) where n is the exponent
+			* 
+			* @param base the base number
+			* @param exponent the exponent (must be non-negative)
+			* @return base raised to the power of exponent
+			* @throws IllegalArgumentException if exponent is negative
+			*/
+			public static long power(long base, int exponent) {
+				// Handle negative exponents
+				if (exponent < 0) {
+					throw new IllegalArgumentException(
+					"Exponent must be non-negative"
+					);
+				}
+				
+				// Base case: any number to the power 0 is 1
+				if (exponent == 0) {
+					return 1;
+				}
+				
+				long result = 1;
+				long currentBase = base;
+				int currentExponent = exponent;
+				
+				while (currentExponent > 0) {
+					// Check if the current exponent is odd
+					if (currentExponent % 2 == 1) {
+						result *= currentBase;
+					}
+					
+					// Square the base for the next bit position
+					currentBase *= currentBase;
+					
+					// Move to the next bit (integer division by 2)
+					currentExponent /= 2;
+				}
+				
+				return result;
+			}
+			
+			/**
+			* Modular exponentiation: computes (base^exponent) % modulus
+			* Prevents overflow by taking modulus at each step
+			* Essential for cryptographic applications
+			*/
+			public static long modularPower(long base, int exponent, long modulus) {
+				if (exponent < 0) {
+					throw new IllegalArgumentException(
+					"Exponent must be non-negative"
+					);
+				}
+				
+				if (modulus <= 0) {
+					throw new IllegalArgumentException(
+					"Modulus must be positive"
+					);
+				}
+				
+				long result = 1;
+				base %= modulus; // Reduce base first
+				
+				while (exponent > 0) {
+					if (exponent % 2 == 1) {
+						result = (result * base) % modulus;
+					}
+					
+					base = (base * base) % modulus;
+					exponent /= 2;
+				}
+				
+				return result;
+			}
+			
+			// Test the implementation
+			public static void main(String[] args) {
+				System.out.println("Computing 3^13:");
+				System.out.println("Result: " + power(3, 13));
+				System.out.println("Expected: 1594323");
+				System.out.println();
+				
+				System.out.println("Computing 2^10:");
+				System.out.println("Result: " + power(2, 10));
+				System.out.println("Expected: 1024");
+				System.out.println();
+				
+				System.out.println("Modular exponentiation: (7^256) % 13:");
+				System.out.println("Result: " + modularPower(7, 256, 13));
+			}
+		}
+	\end{lstlisting}
+	
+	\section{Complexity Analysis}
+	
+	\begin{itemize}
+		\item \textbf{Naive approach}: $O(n)$ multiplications (requires $n-1$ multiplications)
+		\item \textbf{Square-and-multiply}: $O(\log n)$ multiplications
+	\end{itemize}
+	
+	For $3^{13}$:
+	\begin{itemize}
+		\item Naive: 12 multiplications
+		\item Square-and-multiply: 7 operations (4 squarings + 3 multiplications)
+	\end{itemize}
+	
+	This efficiency gain becomes crucial when working with large exponents or when the "multiplication" operation is expensive, as it is with matrices.
+	
+	\section{Extension to Matrix Exponentiation}
+	
+	The beauty of the square-and-multiply algorithm is that it works for \emph{any} algebraic structure with an associative multiplication operation. Matrices satisfy this property, so the algorithm extends naturally to matrix exponentiation.
+
+	The key property that allows this algorithm to work is \textbf{associativity}. For matrices $A$, $B$, and $C$:
+	\[
+	(A \cdot B) \cdot C = A \cdot (B \cdot C)
+	\]
+	
+	This means we can compute products in any order without changing the result. This is crucial because our algorithm rearranges the order of multiplications.
+	
+	Just as $1$ is the multiplicative identity for numbers ($a \cdot 1 = a$), the identity matrix $I$ serves this role for matrices:
+	\[
+	A \cdot I = I \cdot A = A
+	\]
+	
+	For a $2 \times 2$ matrix:
+	\[
+	I = \begin{pmatrix} 1 & 0 \\ 0 & 1 \end{pmatrix}
+	\]
+	
+	This allows us to initialize our result to $I$, just as we initialized the scalar result to $1$.
+	
+	Let's prove that $A^{13}$ can be computed using the same binary decomposition. We have:
+	\[
+	13 = 8 + 4 + 1 = 2^3 + 2^2 + 2^0
+	\]
+	
+	Therefore:
+	\[
+	A^{13} = A^{8+4+1} = A^8 \cdot A^4 \cdot A^1
+	\]
+	
+	This equality holds because of the \textbf{laws of exponents}, which work for matrices:
+	\[
+	A^{m+n} = A^m \cdot A^n \quad \text{(for any } m, n \geq 0\text{)}
+	\]
+	
+	Proof of the exponent law for matrices:
+	\begin{align*}
+		A^{m+n} &= \underbrace{A \cdot A \cdot \ldots \cdot A}_{m+n \text{ times}} \\
+		&= \underbrace{A \cdot A \cdot \ldots \cdot A}_{m \text{ times}} \cdot \underbrace{A \cdot A \cdot \ldots \cdot A}_{n \text{ times}} \\
+		&= A^m \cdot A^n
+	\end{align*}
+	
+	This proof works because matrix multiplication is associative, so we can group the multiplications however we want.
+		
+	\section{Java Implementation for Matrices}
+	
+	\begin{lstlisting}
+		public class MatrixExponentiation {
+			
+			/**
+			* Computes A^n using the square-and-multiply algorithm
+			* Time Complexity: O(d^3 * log n) where d is matrix dimension
+			*/
+			public static int[][] matrixPower(int[][] A, int n) {
+				if (n < 0) {
+					throw new IllegalArgumentException(
+					"Exponent must be non-negative"
+					);
+				}
+				
+				int size = A.length;
+				int[][] result = identity(size); // Start with I
+				int[][] base = copyMatrix(A);    // Start with A
+				
+				while (n > 0) {
+					if (n % 2 == 1) {
+						// Include current power of A
+						result = multiply(result, base);
+					}
+					// Square the base for next bit position
+					base = multiply(base, base);
+					n /= 2;
+				}
+				
+				return result;
+			}
+			
+			/**
+			* Creates an identity matrix of given size
+			*/
+			private static int[][] identity(int size) {
+				int[][] I = new int[size][size];
+				for (int i = 0; i < size; i++) {
+					I[i][i] = 1;
+				}
+				return I;
+			}
+			
+			/**
+			* Multiplies two matrices
+			*/
+			private static int[][] multiply(int[][] A, int[][] B) {
+				int n = A.length;
+				int[][] C = new int[n][n];
+				
+				for (int i = 0; i < n; i++) {
+					for (int j = 0; j < n; j++) {
+						for (int k = 0; k < n; k++) {
+							C[i][j] += A[i][k] * B[k][j];
+						}
+					}
+				}
+				
+				return C;
+			}
+			
+			/**
+			* Creates a copy of a matrix
+			*/
+			private static int[][] copyMatrix(int[][] A) {
+				int n = A.length;
+				int[][] copy = new int[n][n];
+				for (int i = 0; i < n; i++) {
+					for (int j = 0; j < n; j++) {
+						copy[i][j] = A[i][j];
+					}
+				}
+				return copy;
+			}
+		}
+	\end{lstlisting}
+	
+\end{document}
