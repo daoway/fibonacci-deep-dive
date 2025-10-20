@@ -434,7 +434,7 @@ Which shows us the following :
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=0.9\textwidth]{./recursive-time-exec/experimental-data-formula.png}
-	\caption{Exponent execution time}
+	\caption{Model fit to experimental data}
 	\label{fig:experimental_vs_theoretical}
 \end{figure}
 
@@ -1279,12 +1279,12 @@ Result of calculation is presented below :
 ]{./data-types-limitations/LargestExactFibonacci.java}
 Interesting part here is how we output floating point numbers. We use \texttt{BigDecimal} to represent them exactly and print without scientific notation.
 Outpput is a bit surprising. For Integer and Long everything is fine, but for Float and Double we have some unexpected results.
-\begin{lstlisting}[language=bash]
+\begin{verbatim}
 Integer Fibonacci (46): F(46) = 1836311903
 Long Fibonacci (92): F(92) = 7540113804746346429
 Float Fibonacci (186): F(186) = 332825031969915840000000000000000000000
 Double Fibonacci (1476): F(1476) = 130698922376339870000000000000000000... // ton of zeros
-\end{lstlisting}
+\end{verbatim}
 
 % Creating a table for Java data types and their limitations
 Have a looak at this table summarizing limitations of Java data types for Fibonacci calculations:
