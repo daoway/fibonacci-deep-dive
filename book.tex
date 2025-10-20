@@ -322,7 +322,51 @@ F_n = \frac{\varphi^n - \psi^n}{\varphi - \psi}
 \]
 This is the closed form known as \textbf{Binet's formula}.
 
-\subsubsection{M'Clauren series of generating function}
+\subsubsection{Maclaurin series of generating function}
+	For a function \( f(x) \) that is infinitely differentiable at \( x=0 \),
+its \textbf{Maclaurin series} is defined as
+\[
+f(x) = \sum_{n=0}^{\infty} \frac{f^{(n)}(0)}{n!} x^n.
+\]
+Hence, the coefficient of \(x^n\) in this expansion equals \( f^{(n)}(0)/n! \).
+
+Let the Fibonacci sequence \(\{F_n\}\) satisfy
+\[
+F_0 = 0, \quad F_1 = 1, \quad F_{n} = F_{n-1} + F_{n-2}.
+\]
+Its generating function is
+\[
+F(x) = \sum_{n=0}^{\infty} F_n x^n.
+\]
+As we have shown earlier:
+\[
+F(x) = \frac{x}{1 - x - x^2}.
+\]
+
+Expanding \(F(x)\) into a Maclaurin series gives
+\[
+F(x) = \sum_{n=0}^{\infty} \frac{F^{(n)}(0)}{n!} x^n.
+\]
+Comparing this with
+\[
+F(x) = \sum_{n=0}^{\infty} F_n x^n,
+\]
+we conclude that
+\[
+F_n = \frac{F^{(n)}(0)}{n!}.
+\]
+
+For \( n = 5 \),
+\[
+F_5 = \frac{F^{(5)}(0)}{5!}.
+\]
+
+We can perform a symbolic experiment to verify this relationship.
+\lstinputlisting[language=Python, caption={Symbolic verification in Python (SymPy)}]{./maclaurin-series/maclaurin-series.py}
+
+This calculation has no practical purpose whatsoever.  
+It is a purely theoretical (and slightly overcomplicated) way to verify something we already know perfectly well.  
+It was done entirely for fun and curiosity, just to see that the Maclaurin series machinery indeed reproduces Fibonacci numbers symbolically.
 
 % Analyzing time complexity
 \subsection{Time Complexity (Big $\mathcal{O}$)}
