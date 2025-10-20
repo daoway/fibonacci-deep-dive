@@ -532,62 +532,6 @@ The JVM's memory is organized into the following key areas:
 	\end{itemize}
 \end{enumerate}
 
-% Table summarizing memory regions
-\begin{table}[h]
-	\centering
-	\begin{tabular}{|>{\raggedright\arraybackslash}m{3cm}|>{\raggedright\arraybackslash}m{4cm}|>{\raggedright\arraybackslash}m{5cm}|}
-		\hline
-		\textbf{Memory Region} & \textbf{Type} & \textbf{Purpose} \\
-		\hline
-		Heap & Shared & Stores objects, arrays, and class metadata (Metaspace in Java 8+) \\
-		Java Stack & Per-thread & Stores call frames for method execution \\
-		PC Register & Per-thread & Tracks current bytecode instruction \\
-		Method Area & Shared & Stores class metadata and constant pools \\
-		Native Method Stack & Per-thread & Manages native method execution \\
-		\hline
-	\end{tabular}
-	\caption{JVM Memory Regions}
-\end{table}
-
-Consider this Java code:
-\begin{lstlisting}[language=Java]
-public class Example {
-	public static void main(String[] args) {
-		String str = new String("Hello");
-		int result = add(3, 4);
-		System.out.println(str + result);
-	}
-	public static int add(int a, int b) {
-		return a + b;
-	}
-}
-\end{lstlisting}
-
-\begin{enumerate}
-	\item \textbf{Heap}: The \texttt{String} object \texttt{"Hello"} is allocated in the heap's Eden space.
-	\item \textbf{Java Stack}: The \texttt{main} method's call frame stores the \texttt{str} reference and \texttt{args}. A new frame for \texttt{add} stores parameters \texttt{a} and \texttt{b}.
-	\item \textbf{PC Register}: Tracks the current bytecode instruction in \texttt{main} or \texttt{add}.
-	\item \textbf{Method Area}: Stores the bytecode and constant pool for \texttt{Example} class, including the \texttt{"Hello"} string literal.
-	\item \textbf{Garbage Collection}: After \texttt{main} ends, the \texttt{String} object may be reclaimed if no references remain.
-\end{enumerate}
-
-The memory structures work together to support JVM execution:
-\begin{itemize}
-	\item \textbf{Thread Isolation}: Per-thread areas (Java Stack, PC Register, Native Method Stack) ensure threads execute independently without interference.
-	\item \textbf{Shared Resources}: The heap and Method Area (or Metaspace) allow threads to share objects and class data, requiring synchronization (e.g., \texttt{synchronized} blocks) to avoid race conditions.
-	\item \textbf{Garbage Collection}: The garbage collector scans the heap, using references from stacks, Method Area, and static fields as roots to identify reachable objects.
-\end{itemize}
-
-Key Concepts :
-\begin{itemize}
-	\item \textbf{Heap vs. Stack}: Heap stores dynamic, shared objects; stacks store method-scoped, thread-specific data.
-	\item \textbf{Garbage Collection}: Automatically reclaims heap memory but requires careful reference management to avoid leaks.
-	\item \textbf{Performance}: Memory size tuning (e.g., \texttt{-Xmx}, \texttt{-Xss}) impacts performance. Large heaps or stacks may slow execution or garbage collection.
-	\item \textbf{Debugging}: Tools like \texttt{jstack} (for stacks), \texttt{jmap} (for heap), and VisualVM help analyze memory usage and diagnose issues.
-\end{itemize}
-
-%%%%%%%%%%%%%%%%%%%%%
-% Creating a unified section combining pass-by-value, recursion, tail recursion, TCO comparison, bytecode, and method execution
 \subsection{Method Execution in Java}
 
 \subsubsection{Core concepts}
