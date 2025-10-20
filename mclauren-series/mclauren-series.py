@@ -14,7 +14,7 @@ def fib_from_derivative(n: int) -> int:
     Fn_deriv = sp.diff(F, x, n)
     Fn_at_0 = Fn_deriv.subs(x, 0)
     Fn_value = Fn_at_0 / sp.factorial(n)
-    return int(Fn_value)
+    return int(Fn_value.evalf())
 
 
 # Compare the two methods
@@ -23,5 +23,5 @@ print("-" * 42)
 
 for n in range(1, 20):
     fib_sym = fib_from_derivative(n)
-    fib_num = sp.fibonacci(n)  # library function
+    fib_num = int(sp.fibonacci(n).evalf())  # library function
     print(f"{n:3d} | {fib_sym:20d} | {fib_num:12d}")
