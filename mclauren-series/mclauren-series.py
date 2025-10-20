@@ -21,7 +21,7 @@ def fib_from_derivative(n: int) -> int:
 print(f"{'n':>3} | {'Maclaurin (deriv)':>20} | {'Iterative':>12}")
 print("-" * 42)
 
-for n in range(1, 20):
+for n in range(1, 21):
     fib_sym = fib_from_derivative(n)
     fib_num = int(sp.fibonacci(n).evalf())  # library function
     print(f"{n:3d} | {fib_sym:20d} | {fib_num:12d}")
