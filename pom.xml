@@ -28,6 +28,7 @@
                                 <source>recursion-tree-animation</source>
                                 <source>recursive-time-exec</source>
                                 <source>optimizing-recursion</source>
+                                <source>fast-exponentiation</source>
                             </sources>
                         </configuration>
                     </execution>
