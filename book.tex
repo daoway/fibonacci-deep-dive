@@ -551,43 +551,23 @@ When a method is called, the JVM creates a call frame on the thread’s Java sta
 \end{itemize}
 This behavior applies to both iterative and recursive methods, but recursion increases stack depth, risking \texttt{StackOverflowError} for deep calls.
 
-Consider a Java program demonstrating pass-by-value in both iterative and recursive contexts:
-\begin{lstlisting}
-	public class Example {
-		public static void main(String[] args) {
-			int num = 5;
-			StringBuilder sb = new StringBuilder("Factorial: ");
-			modifyPrimitive(num);
-			modifyObject(sb);
-			int result = factorialTail(num, 1, sb);
-			System.out.println("num: " + num); // Outputs: num: 5
-			System.out.println("sb: " + sb + " " + result); // Outputs: sb: Factorial: 5*4*3*2*1 120
-		}
-		
-		public static void modifyPrimitive(int x) {
-			x = 10; // Modifies local copy
-		}
-		
-		public static void modifyObject(StringBuilder builder) {
-			builder.append("World"); // Modifies heap object
-			builder = new StringBuilder("New"); // Local reassignment
-		}
-		
-		public static int factorialTail(int n, int acc, StringBuilder log) {
-			if (n <= 1) {
-				log.append("1");
-				return acc;
-			}
-			log.append(n + "*");
-			return factorialTail(n - 1, n * acc, log); // Tail-recursive call
-		}
-	}
-\end{lstlisting}
-\begin{enumerate}
-	\item \textbf{Primitive (\texttt{num})}: In \texttt{modifyPrimitive}, \texttt{x} is a copy of \texttt{num} (5). Setting \texttt{x = 10} affects only the local copy, so \texttt{num} remains 5.
-	\item \textbf{Object Reference (\texttt{sb})}: In \texttt{modifyObject}, \texttt{builder} is a copy of the reference to \texttt{StringBuilder}. \texttt{builder.append("World")} modifies the heap object, affecting \texttt{sb}. Reassigning \texttt{builder = new StringBuilder("New")} is local, so \texttt{sb} retains its reference.
-	\item \textbf{Tail Recursion (\texttt{factorialTail})}: Each recursive call copies \texttt{n}, \texttt{acc}, and \texttt{log}. Modifications to \texttt{log} (e.g., \texttt{log.append(n + "*")}) persist in the heap. The recursive call is the last operation, but Java creates a new frame each time, risking stack overflow for large \texttt{n}.
-\end{enumerate}
+To demonstrate pass-by-value, let’s use a \texttt{StringBuilder} object, which is mutable and allows us to modify its contents.
+This example will show how pass-by-value works with object references and clarify the distinction between modifying an object’s state and reassigning a reference.
+
+\lstinputlisting[language=Java,caption={Pass-by-Value Demonstration in Java, nolol}]{./jvm-memory-structures/PassByValueExample.java}
+
+When we run this program, we get the following output:
+
+\begin{verbatim}
+Before method calls: number = 10, sb = Hello
+After method calls: number = 10, sb = Hello, World!
+\end{verbatim}
+This output illustrates the pass-by-value behavior:
+\begin{itemize}
+	\item \texttt{Primitive Type (int)}: In the \texttt{changeNumber} method, the parameter \texttt{x} is a copy of the value of \texttt{number}. Changing \texttt{x} to 20 inside the method does not affect the original \texttt{number} variable, as only a copy of its value was passed. Thus, \texttt{number} remains 10.
+	\item \texttt{StringBuilder (modifyStringBuilder)}: In the \texttt{modifyStringBuilder} method, the \texttt{builder} parameter is a copy of the reference to the original \texttt{StringBuilder} object. When we call \texttt{builder.append(", World!")}, we modify the state of the object that \texttt{builder} points to. Since the original \texttt{sb} variable also points to the same object, the change is reflected in \texttt{sb}.
+	\item \texttt{StringBuilder (reassignStringBuilder)}: In the \texttt{reassignStringBuilder} method, the \texttt{builder} parameter is reassigned to a new \texttt{StringBuilder} object. This changes the copy of the reference to point to a new object, but it does not affect the original \texttt{sb} variable, which still points to the original \texttt{StringBuilder} object. Thus, the output remains unchanged after this method call.
+\end{itemize}
 
 % Explaining tail recursion and lack of TCO
 \subsubsection{Tail Recursion}

@@ -29,6 +29,7 @@
                                 <source>recursive-time-exec</source>
                                 <source>optimizing-recursion</source>
                                 <source>fast-exponentiation</source>
+                                <source>jvm-memory-structures</source>
                             </sources>
                         </configuration>
                     </execution>
