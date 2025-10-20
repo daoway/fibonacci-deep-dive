@@ -416,7 +416,7 @@ T(n) = O(\phi^n) \approx O(1.618^n).
 \subsection{Empirical Validation of Time Complexity}
 Let's calculate execution time of first 50 Fibonacci numbers. Also, save exec results in CSV file further for analysis.
 \lstinputlisting[language=Java, caption={Measure execution time}]{./recursive-time-exec/MeasureExecTime.java}
-To show how the time grows, let's build a chart -
+To show how the time grows, let's build a chart. A ltiile bit Pandas and Matplotlib magic here.
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=0.9\textwidth]{./recursive-time-exec/exponential-time-growth.png}
@@ -424,11 +424,11 @@ To show how the time grows, let's build a chart -
 	\label{fig:exponent_growth}
 \end{figure}
 
-To produce this image we use Python with some Pandas :
-\lstinputlisting[language=Python, caption={Exponential growth visualization}]{./recursive-time-exec/fib-exec-time-chart.py}
+%To produce this image we use Python with some Pandas :
+%\lstinputlisting[language=Python, caption={Exponential growth visualization}]{./recursive-time-exec/fib-exec-time-chart.py}
 
 Now we are interested in exact formula of this type of growth. To achieve our goal we'll going to use SciPy.
-\lstinputlisting[language=Python, caption={Approximation of time complexity}]{./recursive-time-exec/empiristic-formula-for-time-complexity.py}
+\lstinputlisting[language=Python, caption={Approximation of time complexity}]{./recursive-time-exec/empiristic-formula-for-time-complexity-cut.py}
 
 Which shows us the following : 
 \begin{figure}[H]
@@ -440,12 +440,12 @@ Which shows us the following :
 
 Axes made logarithmic for better looking chart.
 So, we have result of out numerical modeling 
-\begin{lstlisting}[language=bash]
+\begin{verbatim}
 python empiristic-formula-for-time-complexity.py
 Fitted model: T(n) = 0.0000000027 * 1.600990^n
 Golden ratio (φ): 1.618034
 Deviation of b from φ: 0.017044
-\end{lstlisting}
+\end{verbatim}
 %%%%%%%%%%%%
 
 So, we can have exec time needed to calculate n-th fib. It grows fast and could be very big.
