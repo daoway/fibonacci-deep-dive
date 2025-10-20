@@ -3,13 +3,13 @@ public class PassByValueExample {
         int number = 10;
         StringBuilder sb = new StringBuilder("Hello");
 
-        System.out.println("Before method calls: number = " + number + ", sb = " + sb);
+        System.out.println("Before: number = " + number + ", sb = " + sb);
 
         changeNumber(number);
         modifyStringBuilder(sb);
         reassignStringBuilder(sb);
 
-        System.out.println("After method calls: number = " + number + ", sb = " + sb);
+        System.out.println("After: number = " + number + ", sb = " + sb);
     }
 
     public static void changeNumber(int x) {
