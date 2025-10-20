@@ -1,60 +1,106 @@
 \documentclass[a4paper,12pt]{article}
 \usepackage{amsmath,amssymb,amsfonts}
 \usepackage{geometry}
+\usepackage{listings}
+\usepackage{xcolor}
 \geometry{margin=1in}
 
 \title{Fibonacci Numbers from the Maclaurin Series of the Generating Function}
 \author{}
 \date{}
 
+\lstset{
+	basicstyle=\ttfamily\footnotesize,
+	backgroundcolor=\color{gray!5},
+	frame=single,
+	breaklines=true,
+	postbreak=\mbox{\textcolor{red}{$\hookrightarrow$}\space},
+	keywordstyle=\color{blue},
+	commentstyle=\color{gray},
+	showstringspaces=false
+}
+
 \begin{document}
-\maketitle
+	\maketitle
+	
+	For a function \( f(x) \) that is infinitely differentiable at \( x=0 \),
+	its \textbf{Maclaurin series} is defined as
+	\[
+	f(x) = \sum_{n=0}^{\infty} \frac{f^{(n)}(0)}{n!} x^n.
+	\]
+	Hence, the coefficient of \(x^n\) in this expansion equals \( f^{(n)}(0)/n! \).
+	
+	Let the Fibonacci sequence \(\{F_n\}\) satisfy
+	\[
+	F_0 = 0, \quad F_1 = 1, \quad F_{n} = F_{n-1} + F_{n-2}.
+	\]
+	Its generating function is
+	\[
+	F(x) = \sum_{n=0}^{\infty} F_n x^n.
+	\]
+	As we have shown earlier:
+	\[
+	F(x) = \frac{x}{1 - x - x^2}.
+	\]
+	
+	Expanding \(F(x)\) into a Maclaurin series gives
+	\[
+	F(x) = \sum_{n=0}^{\infty} \frac{F^{(n)}(0)}{n!} x^n.
+	\]
+	Comparing this with
+	\[
+	F(x) = \sum_{n=0}^{\infty} F_n x^n,
+	\]
+	we conclude that
+	\[
+	F_n = \frac{F^{(n)}(0)}{n!}.
+	\]
+	
+	For \( n = 5 \),
+	\[
+	F_5 = \frac{F^{(5)}(0)}{5!}.
+	\]
+	
+	We can perform a symbolic experiment to verify this relationship.
+	
+	\begin{lstlisting}[language=Python, caption={Symbolic verification in Python (SymPy)}]
+		import sympy as sp
+		
+		# Define symbol and generating function
+		x = sp.symbols('x')
+		F = x / (1 - x - x**2)
+		
+		# Compute the 5th derivative
+		F5_deriv = sp.diff(F, x, 5)
+		
+		# Evaluate at x = 0 and divide by 5!
+		F5_at_0 = F5_deriv.subs(x, 0)
+		F5_value = F5_at_0 / sp.factorial(5)
+		
+		print("F^(5)(x) =", sp.latex(F5_deriv))
+		print("F^(5)(0)/5! =", F5_value)
+		
+		# Compare Fibonacci numbers from derivatives and standard definition
+		def fib_from_derivative(n):
+		Fn_deriv = sp.diff(F, x, n)
+		Fn_at_0 = Fn_deriv.subs(x, 0)
+		return int(Fn_at_0 / sp.factorial(n))
+		
+		def fib_iterative(n):
+		if n <= 1:
+		return n
+		a, b = 0, 1
+		for _ in range(2, n + 1):
+		a, b = b, a + b
+		return b
+		
+		for n in range(1, 11):
+		print(n, fib_from_derivative(n), fib_iterative(n))
+	\end{lstlisting}
 
-For a function \( f(x) \) that is infinitely differentiable at \( x=0 \),
-its \textbf{Maclaurin series} is defined as
-\[
-f(x) = \sum_{n=0}^{\infty} \frac{f^{(n)}(0)}{n!} x^n.
-\]
-Hence, the coefficient of \(x^n\) in this expansion equals \( f^{(n)}(0)/n! \).
 
-Let the Fibonacci sequence \(\{F_n\}\) satisfy
-\[
-F_0 = 0, \quad F_1 = 1, \quad F_{n} = F_{n-1} + F_{n-2}.
-\]
-Its generating function is
-\[
-F(x) = \sum_{n=0}^{\infty} F_n x^n.
-\]
-It can be shown that
-\[
-F(x) = \frac{x}{1 - x - x^2}.
-\]
-
-Expanding \(F(x)\) into a Maclaurin series gives
-\[
-F(x) = \sum_{n=0}^{\infty} \frac{F^{(n)}(0)}{n!} x^n.
-\]
-Comparing this with
-\[
-F(x) = \sum_{n=0}^{\infty} F_n x^n,
-\]
-we conclude that
-\[
-F_n = \frac{F^{(n)}(0)}{n!}.
-\]
-
-For \( n = 5 \),
-\[
-F_5 = \frac{F^{(5)}(0)}{5!}.
-\]
-Since the Fibonacci sequence begins as
-\[
-0, \; 1, \; 1, \; 2, \; 3, \; 5, \; 8, \dots,
-\]
-we have \(F_5 = 5\). Therefore,
-\[
-F^{(5)}(0) = 5! \times 5 = 600.
-\]
-
-
+This calculation has no practical purpose whatsoever.  
+It is a purely theoretical (and slightly overcomplicated) way to verify something we already know perfectly well.  
+It was done entirely for fun and curiosity, just to see that the Maclaurin series machinery indeed reproduces Fibonacci numbers symbolically.
+	
 \end{document}
