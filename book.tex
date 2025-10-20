@@ -429,8 +429,60 @@ To show how the time grows, let's build a chart. A ltiile bit Pandas and Matplot
 
 Now we are interested in exact formula of this type of growth. To achieve our goal we'll going to use SciPy.
 \lstinputlisting[language=Python, caption={Approximation of time complexity}]{./recursive-time-exec/empiristic-formula-for-time-complexity-cut.py}
+In this Python script, we analyze the time complexity of an algorithm empirically by fitting an exponential model to measured execution times.
 
-Which shows us the following : 
+
+We assume that the running time $T(n)$ of the algorithm grows approximately exponentially with the input size $n$, according to the model
+
+\[
+	T(n) = a \, b^n,
+\]
+
+where $a > 0$ is a scaling constant and $b > 1$ determines the rate of growth.
+
+The corresponding Python function defining this model is:
+
+\begin{lstlisting}[language=Python]
+def exponential_model(n, a, b):
+    return a * b ** n
+\end{lstlisting}
+
+The script reads a CSV file named \texttt{fibonacci\_data.csv} that contains two columns:
+
+\begin{itemize}
+	\item \texttt{n} — the input size or recursion depth.
+	\item \texttt{time\_sec} — the measured running time in seconds.
+\end{itemize}
+
+\begin{lstlisting}[language=Python]
+data = pd.read_csv('fibonacci_data.csv')
+n = data['n'].values
+time_sec = data['time_sec'].values
+\end{lstlisting}
+
+The parameters $a$ and $b$ are estimated using the \texttt{curve\_fit} function from the \texttt{scipy.optimize} module. This function minimizes the squared error between the empirical data and the model prediction.
+
+An initial guess for the parameters is provided as $a_0 = 10^{-6}$ and $b_0 = 1.618$
+
+\begin{lstlisting}[language=Python]
+popt, pcov = curve_fit(exponential_model, n, time_sec,
+                       p0=[1e-6, 1.618])
+a, b = popt
+\end{lstlisting}
+
+After fitting, the model parameters are printed in the form
+
+\[
+	T(n) = a \cdot b^n.
+\]
+
+Finally, the script computes the predicted execution times using the fitted parameters:
+
+\begin{lstlisting}[language=Python]
+predicted_time = exponential_model(n, a, b)
+\end{lstlisting}
+
+This allows comparing the theoretical exponential model with the observed data to verify whether the algorithm’s time complexity indeed follows an exponential trend.
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=0.9\textwidth]{./recursive-time-exec/experimental-data-formula.png}
@@ -446,9 +498,50 @@ Fitted model: T(n) = 0.0000000027 * 1.600990^n
 Golden ratio (φ): 1.618034
 Deviation of b from φ: 0.017044
 \end{verbatim}
+
+%%%%%%%%%%%% CURVE FIT
+The function \texttt{curve\_fit} from the \texttt{scipy.optimize} library estimates the parameters of a nonlinear model by minimizing the squared difference between the observed data and the model predictions.
+
+Formally, for a given model function
+\[
+	f(n, \boldsymbol{\theta}) = f(n, a, b),
+\]
+and experimental data points $\{(n_i, y_i)\}$, the algorithm finds the parameter vector
+\[
+	\boldsymbol{\theta}^* = \arg\min_{\boldsymbol{\theta}} \sum_i \big( y_i - f(n_i, \boldsymbol{\theta}) \big)^2.
+\]
+
+This is a \emph{nonlinear least squares} problem.
+
+\medskip
+\noindent
+Internally, \texttt{curve\_fit} uses the \textbf{Levenberg–Marquardt algorithm}, which combines the ideas of:
+\begin{itemize}
+	\item the \emph{Gauss–Newton method} — efficient for near-linear problems, and
+	\item \emph{gradient descent} — stable for highly nonlinear models.
+\end{itemize}
+
+The algorithm iteratively adjusts the parameters $(a, b)$ to reduce the residual sum of squares. In each iteration, it:
+\begin{enumerate}
+	\item computes the current model values $f(n_i, a, b)$,
+	\item evaluates the Jacobian matrix of partial derivatives,
+	\item updates the parameters using a damping factor that balances between Gauss–Newton and gradient descent steps.
+\end{enumerate}
+
+\medskip
+\noindent
+If the residual error stops decreasing or becomes sufficiently small, the algorithm is considered to have \emph{converged}, and the best-fit parameters are returned.
+
+\begin{lstlisting}[language=Python]
+popt, pcov = curve_fit(exponential_model, n, time_sec)
+\end{lstlisting}
+
+Here, \texttt{popt} contains the estimated parameters $[a, b]$, while \texttt{pcov} is the covariance matrix that quantifies their uncertainty.
+
+Full explanation on how it works is a bit out of disscussion scope here.
 %%%%%%%%%%%%
 
-So, we can have exec time needed to calculate n-th fib. It grows fast and could be very big.
+We can have exec time needed to calculate n-th fib - $T(n) = 0.0000000027 * 1.600990^n$. It grows fast and could be very big.
 
 \begin{table}[h]
 	\centering
@@ -479,7 +572,7 @@ So, we can have exec time needed to calculate n-th fib. It grows fast and could 
 	\end{tabular}
 \end{table}
 
-So, we have kind of bad news here. To calculate $F(100)$ we'll need $\approx 25 000$ years. Too long to wait, soon we improve algorithm.
+Now, we have kind of bad news here. To calculate $F(100)$ we'll need $\approx 25 000$ years. Too long to wait, soon we improve algorithm.
 
 % Creating a section for JVM Memory Structures
 \subsection{Introduction to JVM Memory Structures}
