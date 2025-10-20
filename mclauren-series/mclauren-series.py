@@ -2,7 +2,8 @@ import sympy as sp
 
 # Define symbol and generating function
 x = sp.symbols('x')
-F = x / (1 - x - x**2)
+F = x / (1 - x - x ** 2)
+
 
 def fib_from_derivative(n: int) -> int:
     """
@@ -15,14 +16,6 @@ def fib_from_derivative(n: int) -> int:
     Fn_value = Fn_at_0 / sp.factorial(n)
     return int(Fn_value)
 
-def fib_iterative(n: int) -> int:
-    """Compute Fibonacci number iteratively."""
-    if n <= 1:
-        return n
-    a, b = 0, 1
-    for _ in range(2, n + 1):
-        a, b = b, a + b
-    return b
 
 # Compare the two methods
 print(f"{'n':>3} | {'Maclaurin (deriv)':>20} | {'Iterative':>12}")
@@ -30,5 +23,5 @@ print("-" * 42)
 
 for n in range(1, 20):
     fib_sym = fib_from_derivative(n)
-    fib_num = fib_iterative(n)
+    fib_num = sp.fibonacci(n)  # library function
     print(f"{n:3d} | {fib_sym:20d} | {fib_num:12d}")
