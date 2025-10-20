@@ -3,7 +3,7 @@ public class IterativeExponentiation {
         double result = 1;
         double base = a;
         while (n > 0) {
-            if ((n & 1) == 1) {
+            if (n % 2 == 1) {
                 result *= base;
             }
             base *= base;
