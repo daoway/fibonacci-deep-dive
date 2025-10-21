@@ -7,7 +7,7 @@ import java.util.List;
 public class StackSizeTest {
     public static void main(String[] args) {
         // Список значень -Xss для тестування (можна додати/змінити)
-        List<String> xssValues = Arrays.asList("512k", "1m", "2m", "4m", "8m");
+        List<String> xssValues = Arrays.asList("512k", "1m", "2m", "4m", "8m", "9m", "10m", "12m", "16m", "20m", "32m");
         String outputFile = "results.csv";
 
         try (FileWriter writer = new FileWriter(outputFile)) {
