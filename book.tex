@@ -414,6 +414,7 @@ T(n) = O(\phi^n) \approx O(1.618^n).
 
 %%%%%%%%%%%%
 \subsection{Empirical Validation of Time Complexity}
+\subsubsection{Measuring execution time}
 Let's calculate execution time of first 50 Fibonacci numbers. Also, save exec results in CSV file further for analysis.
 \lstinputlisting[language=Java, caption={Measure execution time}]{./recursive-time-exec/MeasureExecTime.java}
 To show how the time grows, let's build a chart. A ltiile bit Pandas and Matplotlib magic here.
@@ -426,7 +427,7 @@ To show how the time grows, let's build a chart. A ltiile bit Pandas and Matplot
 
 %To produce this image we use Python with some Pandas :
 %\lstinputlisting[language=Python, caption={Exponential growth visualization}]{./recursive-time-exec/fib-exec-time-chart.py}
-
+\subsubsection{Algorithmic fitting of time complexity}
 Now we are interested in exact formula of this type of growth. To achieve our goal we'll going to use SciPy.
 \lstinputlisting[language=Python, caption={Approximation of time complexity}]{./recursive-time-exec/empiristic-formula-for-time-complexity-cut.py}
 In this Python script, we analyze the time complexity of an algorithm empirically by fitting an exponential model to measured execution times.
