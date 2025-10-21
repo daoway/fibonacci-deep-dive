@@ -698,9 +698,13 @@ TCO support varies across languages, impacting recursion efficiency:
 Recursive calls create stack frames in the JVM, which can lead to a \texttt{StackOverflowError}. We demonstrate this with a simple recursive program :
 \lstinputlisting[language=Java,caption={Testing Recursion Depth}]{./recursion-tree/RecursionDepth.java}
 Run with:
-\begin{lstlisting}[language=bash,caption={Running RecursionDepth}, nolol]
-	java -Xss1m RecursionDepth
-\end{lstlisting}
+\begin{verbatim}
+>java -Xss2m RecursionDepth
+Max recursion depth: 87763
+
+>java -Xss1m RecursionDepth
+Max recursion depth: 21019
+\end{verbatim}
 
 It means that even without calculating something, we limited by the value of stack. God news is that it could be increased, but we have no clue how much we need.
 
