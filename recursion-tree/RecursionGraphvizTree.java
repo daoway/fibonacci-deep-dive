@@ -37,14 +37,5 @@ public class RecursionGraphvizTree {
                 .scale(3.0)
                 .render(Format.PNG)
                 .toFile(new File("fib_tree.png"));
-
-        Graphviz.fromGraph(graph)
-                .render(Format.DOT)
-                .toFile(new File("fib_tree.dot"));
-
-        Graphviz.fromGraph(graph)
-                .scale(3.0)
-                .render(Format.SVG)
-                .toFile(new File("fib_tree.svg"));
     }
 }
