@@ -55,11 +55,7 @@ public class GraphService {
                 .add(Shape.CIRCLE)
                 .add(Style.FILLED)
                 .add(Color.WHITE.fill())
-                .add(Color.BLACK)
-                .add("fixedsize", "true")
-                .add("width", "0.4")
-                .add("height", "0.4")
-                .add("fontsize", "12");
+                .add(Color.BLACK);
     }
 
     public void highlight(String activeId) {
@@ -88,7 +84,7 @@ public class GraphService {
                     .render(Format.PNG)
                     .toFile(new File("step_%02d.png".formatted(stepCounter)));
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
     }
 }
