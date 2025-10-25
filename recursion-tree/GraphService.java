@@ -77,11 +77,9 @@ public class GraphService {
                     .add(Color.rgb("ff6666").fill())
                     .add(Color.BLACK);
         }
-
-        saveStepImage();
     }
 
-    private void saveStepImage() {
+    public void saveStepImage() {
         try {
             stepCounter++;
             Graphviz.fromGraph(graph)

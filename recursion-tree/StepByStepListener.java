@@ -9,5 +9,6 @@ public class StepByStepListener implements RecursionListener {
     public void onCall(int value, String parentId, String callId) {
         graphService.addNode(value, parentId, callId);
         graphService.highlight(callId);
+        graphService.saveStepImage();
     }
 }
