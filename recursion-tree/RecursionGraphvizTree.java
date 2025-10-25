@@ -22,11 +22,12 @@ public class RecursionGraphvizTree {
             parent.addLink(myNode);
         }
 
-        return switch (n) {
-            case 0 -> 0;
-            case 1 -> 1;
-            default -> fib(n - 1, graph, myNode) + fib(n - 2, graph, myNode);
-        };
+        if(n<=1) {
+            return n;
+        }
+        else {
+            return fib(n - 1, graph, myNode) + fib(n - 2, graph, myNode);
+        }
     }
 
     public static void main(String[] args) throws IOException {

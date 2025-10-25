@@ -710,69 +710,6 @@ It means that even without calculating something, we limited by the value of sta
 
 %%%%%%%%%%%%%%%%%%%%%
 \subsection{Recursion Tree}
-%% todo
-\lstinputlisting[language=Java,caption={Recursion StackTrace}]{./recursion-tree/StackTraceDepth.java}
-We have to have compare depth calculation and number of frames, make conclusions.
-
-Output : 
-\begin{lstlisting}[language=bash]
-> java StackTraceDepth
-fib0(5) depth=1 frames=3
-fib0(4) depth=2 frames=4
-fib0(3) depth=3 frames=5
-fib0(2) depth=4 frames=6
-fib0(1) depth=5 frames=7
-fib0(0) depth=5 frames=7
-fib0(1) depth=4 frames=6
-fib0(2) depth=3 frames=5
-fib0(1) depth=4 frames=6
-fib0(0) depth=4 frames=6
-fib0(3) depth=2 frames=4
-fib0(2) depth=3 frames=5
-fib0(1) depth=4 frames=6
-fib0(0) depth=4 frames=6
-fib0(1) depth=3 frames=5
-Result: 5
-\end{lstlisting}
-
-Let's make an improvement. We'll all ident to previous code according to depth
-\lstinputlisting[language=Java,caption={Recursion indent}]{./recursion-tree/SimpleIdent.java}
-\newpage
-Output is better. BTW code is good for debugging any recursion.
-\begin{lstlisting}[language=bash]
-fib0(5) depth=0
-  fib0(4) depth=1
-    fib0(3) depth=2
-      fib0(2) depth=3
-        fib0(1) depth=4
-        => fib0(1) = 1
-        fib0(0) depth=4
-        => fib0(0) = 0
-      => fib0(2) = 1
-      fib0(1) depth=3
-      => fib0(1) = 1
-    => fib0(3) = 2
-    fib0(2) depth=2
-      fib0(1) depth=3
-      => fib0(1) = 1
-      fib0(0) depth=3
-      => fib0(0) = 0
-    => fib0(2) = 1
-  => fib0(4) = 3
-  fib0(3) depth=1
-    fib0(2) depth=2
-      fib0(1) depth=3
-      => fib0(1) = 1
-      fib0(0) depth=3
-      => fib0(0) = 0
-    => fib0(2) = 1
-    fib0(1) depth=2
-    => fib0(1) = 1
-  => fib0(3) = 2
-=> fib0(5) = 5
-Result: 5
-\end{lstlisting}
-
 We can do better. Let's buid a tree using dot syntax (blah-blah-blah)
 \lstinputlisting[language=Java, caption={Recursion tree generator}]{./recursion-tree/RecursionGraphvizTree.java}
 
