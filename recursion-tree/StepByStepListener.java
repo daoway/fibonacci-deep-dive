@@ -22,6 +22,10 @@ public class StepByStepListener implements RecursionListener {
     private MutableGraph graph;
     private int stepCounter = 0;
     public StepByStepListener() {
+        getMuatbleGraph();
+    }
+
+    private void getMuatbleGraph() {
         graph = mutGraph("DFS").setDirected(true);
         graph.graphAttrs().add("viewport", "1200,800");
         graph.graphAttrs().add("dpi", "96");
@@ -34,16 +38,7 @@ public class StepByStepListener implements RecursionListener {
 
     @Override
     public void onCall(int value, String parentId, String callId) {
-        MutableNode node = mutNode("node_" + callId)
-                .add(Label.of(String.valueOf(value)))
-                .add(Shape.CIRCLE)
-                .add(Style.FILLED)
-                .add(Color.WHITE.fill())
-                .add(Color.BLACK)
-                .add("fixedsize", "true")
-                .add("width", "0.4")
-                .add("height", "0.4")
-                .add("fontsize", "12");
+        MutableNode node = getMutableNode(value, callId);
 
         graph.add(node);
         nodes.put(callId, node);
@@ -53,6 +48,19 @@ public class StepByStepListener implements RecursionListener {
         }
 
         highlight(callId);
+    }
+
+    private MutableNode getMutableNode(int value, String callId) {
+        return mutNode("node_" + callId)
+                .add(Label.of(String.valueOf(value)))
+                .add(Shape.CIRCLE)
+                .add(Style.FILLED)
+                .add(Color.WHITE.fill())
+                .add(Color.BLACK)
+                .add("fixedsize", "true")
+                .add("width", "0.4")
+                .add("height", "0.4")
+                .add("fontsize", "12");
     }
 
     private void highlight(String activeId) {
