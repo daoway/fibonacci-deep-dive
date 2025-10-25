@@ -28,14 +28,15 @@ public class GraphService {
     }
 
     private MutableGraph createGraph() {
-        MutableGraph g = mutGraph("DFS").setDirected(true);
-        g.graphAttrs().add("viewport", "%s,%s".formatted(IMAGE_WIDTH, IMAGE_HEIGHT));
+        MutableGraph g = mutGraph("RecursionGraph").setDirected(true);
+        g.graphAttrs()
+                .add("viewport", "%s,%s".formatted(IMAGE_WIDTH, IMAGE_HEIGHT));
         g.graphAttrs().add("dpi", "96");
         g.nodeAttrs().add(Shape.CIRCLE);
         g.nodeAttrs().add("fixedsize", "true");
-        g.nodeAttrs().add("width", "0.4");
-        g.nodeAttrs().add("height", "0.4");
-        g.nodeAttrs().add("fontsize", "12");
+        g.nodeAttrs().add("width", "0.8");
+        g.nodeAttrs().add("height", "0.8");
+        g.nodeAttrs().add("fontsize", "14");
         return g;
     }
 
