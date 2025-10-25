@@ -7,8 +7,8 @@ public class FibonacciRecursive {
         this.listener = listener;
     }
 
-    public int fib(int n, Integer parentId) {
-        int callId = UUID.randomUUID().hashCode();
+    public int fib(int n, String parentId) {
+        String callId = UUID.randomUUID().toString();
         listener.onCall(n, parentId, callId);
 
         if (n <= 1) {

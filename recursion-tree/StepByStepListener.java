@@ -18,7 +18,7 @@ import static guru.nidi.graphviz.model.Factory.mutNode;
 public class StepByStepListener implements RecursionListener {
     private static final int IMAGE_WIDTH = 1200;
     private static final int IMAGE_HEIGHT = 800;
-    private final Map<Integer, MutableNode> nodes = new HashMap<>();
+    private final Map<String, MutableNode> nodes = new HashMap<>();
     private MutableGraph graph;
     private int stepCounter = 0;
     public StepByStepListener() {
@@ -33,7 +33,7 @@ public class StepByStepListener implements RecursionListener {
     }
 
     @Override
-    public void onCall(int value, Integer parentId, int callId) {
+    public void onCall(int value, String parentId, String callId) {
         MutableNode node = mutNode("node_" + callId)
                 .add(Label.of(String.valueOf(value)))
                 .add(Shape.CIRCLE)
@@ -55,7 +55,7 @@ public class StepByStepListener implements RecursionListener {
         highlight(callId);
     }
 
-    private void highlight(int activeId) {
+    private void highlight(String activeId) {
         for (MutableNode n : nodes.values()) {
             n.add(Style.FILLED)
                     .add(Color.WHITE.fill())

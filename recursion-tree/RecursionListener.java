@@ -1,3 +1,3 @@
 public interface RecursionListener {
-    void onCall(int n, Integer parentId, int callId);
+    void onCall(int n, String parentId, String callId);
 }

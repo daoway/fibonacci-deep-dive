@@ -9,10 +9,10 @@ import static guru.nidi.graphviz.model.Factory.*;
 
 public class GraphvizRecursionListener implements RecursionListener {
     private final MutableGraph graph = mutGraph("Fibonacci").setDirected(true);
-    private final Map<Integer, MutableNode> nodes = new HashMap<>();
+    private final Map<String, MutableNode> nodes = new HashMap<>();
 
     @Override
-    public void onCall(int n, Integer parentId, int callId) {
+    public void onCall(int n, String parentId, String callId) {
         MutableNode node = mutNode("fib_" + callId)
                 .add(Label.of("fib(" + n + ")"));
         graph.add(node);
