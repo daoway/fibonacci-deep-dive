@@ -16,8 +16,8 @@ import static guru.nidi.graphviz.model.Factory.mutGraph;
 import static guru.nidi.graphviz.model.Factory.mutNode;
 
 public class GraphService {
-    private static final int IMAGE_WIDTH = 800;
-    private static final int IMAGE_HEIGHT = 600;
+    private static final int IMAGE_WIDTH = 500;
+    private static final int IMAGE_HEIGHT = 500;
 
     private final MutableGraph graph;
     private final Map<String, MutableNode> nodes = new HashMap<>();
@@ -36,7 +36,7 @@ public class GraphService {
         g.nodeAttrs().add("fixedsize", "true");
         g.nodeAttrs().add("width", "0.8");
         g.nodeAttrs().add("height", "0.8");
-        g.nodeAttrs().add("fontsize", "14");
+        g.nodeAttrs().add("fontsize", "16");
         return g;
     }
 
