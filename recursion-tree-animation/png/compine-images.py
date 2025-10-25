@@ -5,7 +5,7 @@ import os
 
 def combine_recursion_frames():
     # List of frame filenames
-    frame_files = [f'frame_{i:03d}.png' for i in range(15)]
+    frame_files = [f'step_{i:02d}.png' for i in range(15)]
     
     # Check which files exist
     existing_frames = []
@@ -48,7 +48,7 @@ def combine_recursion_frames():
         try:
             img = mpimg.imread(frame_file)
             axes[i].imshow(img)
-            axes[i].set_title(f'Step {i:03d}', fontsize=10)
+            axes[i].set_title(f'Step {i:02d}', fontsize=10)
             axes[i].axis('off')  # Remove axis ticks and labels
         except Exception as e:
             print(f"Error loading {frame_file}: {e}")
@@ -69,7 +69,7 @@ def combine_recursion_frames():
     print(f"Combined image saved as: {output_filename}")
     
     # Show the plot
-    plt.show()
+    #plt.show()
 
 if __name__ == "__main__":
     combine_recursion_frames()

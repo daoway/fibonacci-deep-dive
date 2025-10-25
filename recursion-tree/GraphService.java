@@ -80,6 +80,7 @@ public class GraphService {
         try {
             stepCounter++;
             Graphviz.fromGraph(graph)
+                    .scale(3)
                     .width(IMAGE_WIDTH)
                     .height(IMAGE_HEIGHT)
                     .render(Format.PNG)
