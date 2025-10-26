@@ -1,9 +1,28 @@
-import com.sun.jdi.*;
+import com.sun.jdi.AbsentInformationException;
+import com.sun.jdi.Bootstrap;
+import com.sun.jdi.IncompatibleThreadStateException;
+import com.sun.jdi.LocalVariable;
+import com.sun.jdi.PrimitiveValue;
+import com.sun.jdi.StackFrame;
+import com.sun.jdi.ThreadReference;
+import com.sun.jdi.Value;
+import com.sun.jdi.VirtualMachine;
+import com.sun.jdi.VirtualMachineManager;
 import com.sun.jdi.connect.AttachingConnector;
 import com.sun.jdi.connect.Connector;
 import com.sun.jdi.connect.IllegalConnectorArgumentsException;
-import com.sun.jdi.event.*;
-import com.sun.jdi.request.*;
+import com.sun.jdi.event.ClassPrepareEvent;
+import com.sun.jdi.event.Event;
+import com.sun.jdi.event.EventQueue;
+import com.sun.jdi.event.EventSet;
+import com.sun.jdi.event.MethodEntryEvent;
+import com.sun.jdi.event.MethodExitEvent;
+import com.sun.jdi.event.VMDeathEvent;
+import com.sun.jdi.event.VMDisconnectEvent;
+import com.sun.jdi.request.ClassPrepareRequest;
+import com.sun.jdi.request.EventRequestManager;
+import com.sun.jdi.request.MethodEntryRequest;
+import com.sun.jdi.request.MethodExitRequest;
 import guru.nidi.graphviz.attribute.Label;
 import guru.nidi.graphviz.engine.Format;
 import guru.nidi.graphviz.engine.Graphviz;
@@ -12,36 +31,27 @@ import guru.nidi.graphviz.model.MutableNode;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Deque;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
-import static guru.nidi.graphviz.model.Factory.*;
+import static guru.nidi.graphviz.model.Factory.mutGraph;
+import static guru.nidi.graphviz.model.Factory.mutNode;
 
 public class RecursionTreeDebugger {
     private static final String TARGET_CLASS = "FibonacciTarget";
     private static final String FIB_METHOD = "fibonacci";
     private static final String PARAM_NAME = "n";
-
-    private VirtualMachine vm;
-    private EventRequestManager eventManager;
-
-    // Дерево викликів
-    private static class CallNode {
-        final String id;
-        final int n;
-        final String parentId;
-        long returnValue = -1;
-        final List<CallNode> children = new ArrayList<>();
-
-        CallNode(String id, int n, String parentId) {
-            this.id = id;
-            this.n = n;
-            this.parentId = parentId;
-        }
-    }
-
     private final Map<String, CallNode> callMap = new HashMap<>();
     private final Deque<String> callStack = new ArrayDeque<>();
-    private final MutableGraph graph = mutGraph("Fibonacci Call Tree").setDirected(true);
+    private final MutableGraph graph =
+            mutGraph("Fibonacci Call Tree").setDirected(true);
+    private VirtualMachine vm;
+    private EventRequestManager eventManager;
 
     public static void main(String[] args) {
         new RecursionTreeDebugger().debug();
@@ -60,7 +70,8 @@ public class RecursionTreeDebugger {
         AttachingConnector connector = vmm.attachingConnectors().stream()
                 .filter(c -> c.transport().name().equals("dt_socket"))
                 .findFirst()
-                .orElseThrow(() -> new RuntimeException("Socket connector not found"));
+                .orElseThrow(() -> new RuntimeException(
+                        "Socket connector not found"));
 
         Map<String, Connector.Argument> args = connector.defaultArguments();
         args.get("hostname").setValue("localhost");
@@ -109,8 +120,10 @@ public class RecursionTreeDebugger {
                     handleMethodEntry((MethodEntryEvent) event);
                 } else if (event instanceof MethodExitEvent) {
                     handleMethodExit((MethodExitEvent) event);
-                } else if (event instanceof VMDeathEvent || event instanceof VMDisconnectEvent) {
-                    System.out.println("Target VM terminated. Generating call tree...");
+                } else if (event instanceof VMDeathEvent ||
+                        event instanceof VMDisconnectEvent) {
+                    System.out.println(
+                            "Target VM terminated. Generating call tree...");
                     generateGraph();
                     return;
                 }
@@ -124,7 +137,9 @@ public class RecursionTreeDebugger {
     }
 
     private void handleMethodEntry(MethodEntryEvent event) {
-        if (!FIB_METHOD.equals(event.method().name())) return;
+        if (!FIB_METHOD.equals(event.method().name())) {
+            return;
+        }
 
         ThreadReference thread = event.thread();
         StackFrame frame;
@@ -151,21 +166,27 @@ public class RecursionTreeDebugger {
             }
         }
 
-        System.out.printf("→ fibonacci(%d) [id=%s]%n", n, callId.substring(0, 8));
+        System.out.printf("→ fibonacci(%d) [id=%s]%n", n,
+                callId.substring(0, 8));
     }
 
     private void handleMethodExit(MethodExitEvent event) {
-        if (!FIB_METHOD.equals(event.method().name())) return;
+        if (!FIB_METHOD.equals(event.method().name())) {
+            return;
+        }
 
         String callId = callStack.pop();
         CallNode node = callMap.get(callId);
-        if (node == null) return;
+        if (node == null) {
+            return;
+        }
 
         if (event.returnValue() instanceof PrimitiveValue pv) {
             node.returnValue = pv.longValue();
         }
 
-        System.out.printf("← fibonacci(%d) = %d [id=%s]%n", node.n, node.returnValue, callId.substring(0, 8));
+        System.out.printf("← fibonacci(%d) = %d [id=%s]%n", node.n,
+                node.returnValue, callId.substring(0, 8));
     }
 
     private String getLocalVariableValue(StackFrame frame, String varName) {
@@ -176,7 +197,8 @@ public class RecursionTreeDebugger {
                     return val != null ? val.toString() : "?";
                 }
             }
-        } catch (AbsentInformationException ignored) {}
+        } catch (AbsentInformationException ignored) {
+        }
         return "?";
     }
 
@@ -220,5 +242,20 @@ public class RecursionTreeDebugger {
 
         graph.add(graphNode);
         return graphNode;
+    }
+
+    // Дерево викликів
+    private static class CallNode {
+        final String id;
+        final int n;
+        final String parentId;
+        final List<CallNode> children = new ArrayList<>();
+        long returnValue = -1;
+
+        CallNode(String id, int n, String parentId) {
+            this.id = id;
+            this.n = n;
+            this.parentId = parentId;
+        }
     }
 }
