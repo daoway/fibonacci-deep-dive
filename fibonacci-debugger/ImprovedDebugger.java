@@ -100,7 +100,7 @@ public class ImprovedDebugger {
         ReferenceType clazz = event.referenceType();
         System.out.println("Class loaded: " + clazz.name());
         setMainBreakpoint(clazz);
-        setFibonacciMethodRequests(clazz);
+        setFibonacciMethodRequests();
     }
 
     private void setMainBreakpoint(ReferenceType clazz) {
@@ -116,7 +116,7 @@ public class ImprovedDebugger {
         }
     }
 
-    private void setFibonacciMethodRequests(ReferenceType clazz) {
+    private void setFibonacciMethodRequests() {
         MethodEntryRequest entryRequest = eventManager.createMethodEntryRequest();
         entryRequest.addClassFilter(TARGET_CLASS);
         entryRequest.enable();
