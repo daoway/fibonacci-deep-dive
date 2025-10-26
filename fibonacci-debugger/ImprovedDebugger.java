@@ -17,7 +17,7 @@ public class ImprovedDebugger {
     private static final String TARGET_CLASS = "FibonacciTarget";
     private static final String MAIN_METHOD = "main";
     private static final String FIBONACCI_METHOD = "fibonacci";
-    private static final String PARAM_NAME = "n"; // Параметр n
+    private static final String PARAM_NAME = "n";
 
     private VirtualMachine vm;
     private EventRequestManager eventManager;
@@ -28,7 +28,7 @@ public class ImprovedDebugger {
 
     public void debug() {
         connect();
-        setInitialRequests(); // Перейменовано для кращої семантики
+        setInitialRequests();
         vm.resume();
         handleEvents();
     }
@@ -59,7 +59,6 @@ public class ImprovedDebugger {
     }
 
     private void setInitialRequests() {
-        // 1. Запит на підготовку класу
         ClassPrepareRequest classPrepareRequest =
                 eventManager.createClassPrepareRequest();
         classPrepareRequest.addClassFilter(TARGET_CLASS);
@@ -83,11 +82,11 @@ public class ImprovedDebugger {
                 if (event instanceof ClassPrepareEvent) {
                     handleClassPrepare((ClassPrepareEvent) event);
                 } else if (event instanceof BreakpointEvent) {
-                    handleBreakpoint((BreakpointEvent) event); // Для main
+                    handleBreakpoint((BreakpointEvent) event); // main
                 } else if (event instanceof MethodEntryEvent) {
-                    handleMethodEntry((MethodEntryEvent) event); // Нова обробка входу
+                    handleMethodEntry((MethodEntryEvent) event); // entry
                 } else if (event instanceof MethodExitEvent) {
-                    handleMethodExit((MethodExitEvent) event); // Обробка виходу
+                    handleMethodExit((MethodExitEvent) event); // exit
                 } else if (event instanceof VMDeathEvent || event instanceof VMDisconnectEvent) {
                     System.out.println("Target VM terminated");
                     return;
@@ -117,15 +116,12 @@ public class ImprovedDebugger {
         }
     }
 
-    // Встановлюємо запити на ВХІД та ВИХІД з методу fibonacci
     private void setFibonacciMethodRequests(ReferenceType clazz) {
-        // Встановлення MethodEntryRequest для фіксації входу
         MethodEntryRequest entryRequest = eventManager.createMethodEntryRequest();
         entryRequest.addClassFilter(TARGET_CLASS);
         entryRequest.enable();
         System.out.println("MethodEntryRequest set for " + TARGET_CLASS);
 
-        // Встановлення MethodExitRequest для фіксації виходу
         MethodExitRequest exitRequest = eventManager.createMethodExitRequest();
         exitRequest.addClassFilter(TARGET_CLASS);
         exitRequest.enable();
@@ -133,7 +129,6 @@ public class ImprovedDebugger {
     }
 
     private void handleBreakpoint(BreakpointEvent event) {
-        // Використовуємо лише для main()
         String methodName = event.location().method().name();
         if (MAIN_METHOD.equals(methodName)) {
             System.out.println("BREAKPOINT in main() at line " + event.location().lineNumber());
@@ -185,7 +180,6 @@ public class ImprovedDebugger {
         }
         int fibonacciCount = 0;
 
-        // При ВХОДІ кадр вже додано, при ВИХОДІ - ще не видалено
         System.out.println("Stack depth (" + type + "): " + frames.size());
 
         for (int i = 0; i < frames.size(); i++) {
@@ -204,7 +198,6 @@ public class ImprovedDebugger {
         System.out.println("Fibonacci calls in stack: " + fibonacciCount);
     }
 
-    // ... (getLocalVariableValue залишається без змін)
     private String getLocalVariableValue(StackFrame frame, Location location, String varName) {
         try {
             List<LocalVariable> variables = location.method().variables();
@@ -215,7 +208,7 @@ public class ImprovedDebugger {
                 }
             }
         } catch (AbsentInformationException e) {
-            // Ігноруємо відсутність інформації, це не критично для демонстрації стека
+            // ignore
         }
         return "?";
     }
