@@ -1,27 +1,13 @@
-import com.sun.jdi.AbsentInformationException;
-import com.sun.jdi.Bootstrap;
-import com.sun.jdi.IncompatibleThreadStateException;
-import com.sun.jdi.LocalVariable;
-import com.sun.jdi.Location;
-import com.sun.jdi.Method;
-import com.sun.jdi.ReferenceType;
-import com.sun.jdi.StackFrame;
-import com.sun.jdi.ThreadReference;
-import com.sun.jdi.Value;
-import com.sun.jdi.VirtualMachine;
-import com.sun.jdi.VirtualMachineManager;
+import com.sun.jdi.*;
 import com.sun.jdi.connect.AttachingConnector;
 import com.sun.jdi.connect.Connector;
 import com.sun.jdi.connect.IllegalConnectorArgumentsException;
-import com.sun.jdi.event.BreakpointEvent;
-import com.sun.jdi.event.ClassPrepareEvent;
-import com.sun.jdi.event.Event;
-import com.sun.jdi.event.EventQueue;
-import com.sun.jdi.event.EventSet;
-import com.sun.jdi.event.VMDeathEvent;
+import com.sun.jdi.event.*;
 import com.sun.jdi.request.BreakpointRequest;
 import com.sun.jdi.request.ClassPrepareRequest;
 import com.sun.jdi.request.EventRequestManager;
+import com.sun.jdi.request.MethodEntryRequest;
+import com.sun.jdi.request.MethodExitRequest;
 
 import java.io.IOException;
 import java.util.List;
@@ -42,7 +28,7 @@ public class MinimalDebugger {
 
     public void debug() {
         connect();
-        setBreakpoint();
+        setInitialRequests();
         vm.resume();
         handleEvents();
     }
@@ -71,7 +57,7 @@ public class MinimalDebugger {
         System.out.println("Connected to: " + vm.name());
     }
 
-    private void setBreakpoint() {
+    private void setInitialRequests() {
         ClassPrepareRequest classPrepareRequest =
                 eventManager.createClassPrepareRequest();
         classPrepareRequest.addClassFilter(TARGET_CLASS);
@@ -95,8 +81,12 @@ public class MinimalDebugger {
                 if (event instanceof ClassPrepareEvent) {
                     handleClassPrepare((ClassPrepareEvent) event);
                 } else if (event instanceof BreakpointEvent) {
-                    handleBreakpoint((BreakpointEvent) event);
-                } else if (event instanceof VMDeathEvent) {
+                    handleBreakpoint((BreakpointEvent) event); // main
+                } else if (event instanceof MethodEntryEvent) {
+                    handleMethodEntry((MethodEntryEvent) event); // entry
+                } else if (event instanceof MethodExitEvent) {
+                    handleMethodExit((MethodExitEvent) event); // exit
+                } else if (event instanceof VMDeathEvent || event instanceof VMDisconnectEvent) {
                     System.out.println("Target VM terminated");
                     return;
                 }
@@ -108,50 +98,79 @@ public class MinimalDebugger {
     private void handleClassPrepare(ClassPrepareEvent event) {
         ReferenceType clazz = event.referenceType();
         System.out.println("Class loaded: " + clazz.name());
-        setBreakpoint(clazz, MAIN_METHOD);
-        setBreakpoint(clazz, FIBONACCI_METHOD);
+        setMainBreakpoint(clazz);
+        setFibonacciMethodRequests();
     }
 
-    private void setBreakpoint(ReferenceType clazz, String methodName) {
+    private void setMainBreakpoint(ReferenceType clazz) {
         try {
-            Method method = clazz.methodsByName(methodName).stream().findFirst()
-                    .orElseThrow(() -> new RuntimeException(
-                            "Method " + methodName + " not found in " + clazz.name()));
+            Method method = clazz.methodsByName(MAIN_METHOD).stream().findFirst()
+                    .orElseThrow(() -> new RuntimeException("Method " + MAIN_METHOD + " not found."));
             BreakpointRequest breakpointRequest =
                     eventManager.createBreakpointRequest(method.location());
             breakpointRequest.enable();
+            System.out.println("Breakpoint set at main method start");
         } catch (Exception e) {
-            System.err.println(
-                    "Failed to set breakpoint: " + e.getMessage());
+            System.err.println("Failed to set main breakpoint: " + e.getMessage());
         }
+    }
+
+    private void setFibonacciMethodRequests() {
+        MethodEntryRequest entryRequest = eventManager.createMethodEntryRequest();
+        entryRequest.addClassFilter(TARGET_CLASS);
+        entryRequest.enable();
+        System.out.println("MethodEntryRequest set for " + TARGET_CLASS);
+
+        MethodExitRequest exitRequest = eventManager.createMethodExitRequest();
+        exitRequest.addClassFilter(TARGET_CLASS);
+        exitRequest.enable();
+        System.out.println("MethodExitRequest set for " + TARGET_CLASS);
     }
 
     private void handleBreakpoint(BreakpointEvent event) {
-        ThreadReference thread = event.thread();
-        StackFrame frame;
-        try {
-            frame = thread.frame(0);
-        } catch (IncompatibleThreadStateException e) {
-            throw new RuntimeException(e);
-        }
-        Location location = frame.location();
-        String methodName = location.method().name();
-
-        System.out.println("BREAKPOINT in " + methodName + "() at line " +
-                location.lineNumber());
-
+        String methodName = event.location().method().name();
         if (MAIN_METHOD.equals(methodName)) {
+            System.out.println("BREAKPOINT in main() at line " + event.location().lineNumber());
             System.out.println("=== PROGRAM STARTED ===");
-            return;
-        }
-
-        if (FIBONACCI_METHOD.equals(methodName)) {
-            System.out.println("=== FIBONACCI CALL ===");
-            showStackFrames(thread);
         }
     }
 
-    private void showStackFrames(ThreadReference thread) {
+    private void handleMethodEntry(MethodEntryEvent event) {
+        ThreadReference thread = event.thread();
+        String methodName = event.method().name();
+
+        if (FIBONACCI_METHOD.equals(methodName)) {
+            StackFrame frame;
+            try {
+                frame = thread.frame(0);
+            } catch (IncompatibleThreadStateException e) {
+                return;
+            }
+
+            String nValue = getLocalVariableValue(frame, frame.location(), PARAM_NAME);
+
+            System.out.println("\n------------------------------------------");
+            System.out.println("-> ENTRY in fibonacci(" + nValue + ")");
+            showStackFrames(thread, "ENTRY");
+
+        }
+    }
+
+    private void handleMethodExit(MethodExitEvent event) {
+        ThreadReference thread = event.thread();
+        String methodName = event.method().name();
+
+        if (FIBONACCI_METHOD.equals(methodName)) {
+            long returnValue = event.returnValue() instanceof PrimitiveValue ?
+                    ((PrimitiveValue) event.returnValue()).longValue() : -1;
+
+            System.out.println("\n------------------------------------------");
+            System.out.println("<- EXIT from fibonacci (returns: " + returnValue + ")");
+            showStackFrames(thread, "EXIT");
+        }
+    }
+
+    private void showStackFrames(ThreadReference thread, String type) {
         List<StackFrame> frames;
         try {
             frames = thread.frames();
@@ -160,7 +179,7 @@ public class MinimalDebugger {
         }
         int fibonacciCount = 0;
 
-        System.out.println("Stack depth: " + frames.size());
+        System.out.println("Stack depth (" + type + "): " + frames.size());
 
         for (int i = 0; i < frames.size(); i++) {
             StackFrame frame = frames.get(i);
@@ -188,7 +207,7 @@ public class MinimalDebugger {
                 }
             }
         } catch (AbsentInformationException e) {
-            System.err.println("Variable info not available: " + e.getMessage());
+            // ignore
         }
         return "?";
     }
