@@ -1,0 +1,31 @@
+digraph "Fibonacci Call Tree" {
+"2d3f7a19-1317-4a7a-a9e9-081d9068a82b" ["label"="fib(1)\n=1"]
+"5f2859cf-2016-4c4c-b6fa-fe37abf756a9" ["label"="fib(0)\n=0"]
+"4b7fe0ad-e2e9-4c49-ac60-12623a270a61" ["label"="fib(2)\n=1"]
+"ed3fe69c-4f3f-47c6-9a85-73d4330c0563" ["label"="fib(1)\n=1"]
+"26315ca1-f28d-495f-ba2f-db69df4725da" ["label"="fib(3)\n=2"]
+"4ec83d2d-8af7-4f59-9a02-08db545353ae" ["label"="fib(1)\n=1"]
+"7c3ea69c-9b17-4e30-81ac-fa88edd3750f" ["label"="fib(0)\n=0"]
+"e332b9da-7f07-42ea-b10e-68d903042281" ["label"="fib(2)\n=1"]
+"c084905f-34d1-4c98-a837-d7b7eaf95cb4" ["label"="fib(4)\n=3"]
+"018f791c-c8ab-45db-985d-752518161339" ["label"="fib(1)\n=1"]
+"6664053a-683b-4078-9fbd-e6fc7e0b29bf" ["label"="fib(0)\n=0"]
+"671d2c9b-7d22-49b3-8882-787bf4e6652d" ["label"="fib(2)\n=1"]
+"ebcfd570-b395-4108-9bd4-e7c617a74fc7" ["label"="fib(1)\n=1"]
+"6773f253-0d47-4538-8077-41f393cb5c30" ["label"="fib(3)\n=2"]
+"c0404812-ee83-4421-89e1-b01151fc2c93" ["label"="fib(5)\n=5"]
+"4b7fe0ad-e2e9-4c49-ac60-12623a270a61" -> "2d3f7a19-1317-4a7a-a9e9-081d9068a82b"
+"4b7fe0ad-e2e9-4c49-ac60-12623a270a61" -> "5f2859cf-2016-4c4c-b6fa-fe37abf756a9"
+"26315ca1-f28d-495f-ba2f-db69df4725da" -> "4b7fe0ad-e2e9-4c49-ac60-12623a270a61"
+"26315ca1-f28d-495f-ba2f-db69df4725da" -> "ed3fe69c-4f3f-47c6-9a85-73d4330c0563"
+"e332b9da-7f07-42ea-b10e-68d903042281" -> "4ec83d2d-8af7-4f59-9a02-08db545353ae"
+"e332b9da-7f07-42ea-b10e-68d903042281" -> "7c3ea69c-9b17-4e30-81ac-fa88edd3750f"
+"c084905f-34d1-4c98-a837-d7b7eaf95cb4" -> "26315ca1-f28d-495f-ba2f-db69df4725da"
+"c084905f-34d1-4c98-a837-d7b7eaf95cb4" -> "e332b9da-7f07-42ea-b10e-68d903042281"
+"671d2c9b-7d22-49b3-8882-787bf4e6652d" -> "018f791c-c8ab-45db-985d-752518161339"
+"671d2c9b-7d22-49b3-8882-787bf4e6652d" -> "6664053a-683b-4078-9fbd-e6fc7e0b29bf"
+"6773f253-0d47-4538-8077-41f393cb5c30" -> "671d2c9b-7d22-49b3-8882-787bf4e6652d"
+"6773f253-0d47-4538-8077-41f393cb5c30" -> "ebcfd570-b395-4108-9bd4-e7c617a74fc7"
+"c0404812-ee83-4421-89e1-b01151fc2c93" -> "c084905f-34d1-4c98-a837-d7b7eaf95cb4"
+"c0404812-ee83-4421-89e1-b01151fc2c93" -> "6773f253-0d47-4538-8077-41f393cb5c30"
+}
